@@ -25,12 +25,7 @@ fun MemberType.computeEnergy() {
     val dx = intArrayOf(-1, 1, -1, 1)
     val dy = intArrayOf(-1, 1, 1, -1)
 
-    val board = Array(solutionLastIndex() + 1) { BooleanArray(solutionLastIndex() + 1) }.also { bd ->
-        (0..solutionLastIndex()).forEach {
-            bd[it][this.solution[it]] = true
-        }
-    }
-
+    val board = getBoard()
     (0..solutionLastIndex()).forEach { x -> // for all solution line (numbers)
         (0..3).forEach { jj -> // NW then SE etc
             var tmpX = x
@@ -46,3 +41,23 @@ fun MemberType.computeEnergy() {
     this.energy = conflictCount.toFloat()
 }
 
+fun MemberType.emitPrettySolution() {
+    println(
+        "\nThe Board:\n${
+            stringView()
+                .replace("true", "Q")
+                .replace("false", "x")
+        }"
+    )
+}
+
+fun MemberType.stringView() = getBoard().run {
+    this.indices.joinToString("") { this[it].contentToString() + "\n" }
+}
+
+private fun MemberType.getBoard() =
+    Array(solutionLastIndex() + 1) { BooleanArray(solutionLastIndex() + 1) }.also { bd ->
+        (0..solutionLastIndex()).forEach {
+            bd[it][this.solution[it]] = true
+        }
+    }

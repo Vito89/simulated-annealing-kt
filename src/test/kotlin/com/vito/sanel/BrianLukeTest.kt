@@ -4,6 +4,7 @@ import com.vito.sanel.models.MemberType
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertNotEquals
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
 class BrianLukeTest {
@@ -75,6 +76,18 @@ class BrianLukeTest {
             this.computeEnergy().also {
                 assertEquals(0F, this.energy)
             }
+        }
+    }
+
+    @Test
+    fun `should be equals stringView size two`() {
+        MemberType(solution = intArrayOf(0, 1)).run {
+            this.stringView().also {
+                assertTrue(it.length > 10)
+                assertEquals("[true, false]\n[false, true]\n", it)
+                print(it)
+            }
+            print(this.emitPrettySolution())
         }
     }
 }
