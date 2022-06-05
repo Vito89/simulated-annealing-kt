@@ -4,20 +4,20 @@ import com.vito.sanel.models.MemberType
 import kotlin.random.Random
 
 fun MemberType.tweakSolution() {
-    val x = Random.nextInt(0, solutionLastIndex())
-    var y = Random.nextInt(0, solutionLastIndex())
+    val x = Random.nextInt(0, solutionSize() - 1)
+    var y = Random.nextInt(0, solutionSize() - 1)
     while (x == y) {
-        y = Random.nextInt(0, solutionLastIndex())
+        y = Random.nextInt(0, solutionSize() - 1)
     }
     this.solution[x] = this.solution[y].also { this.solution[y] = this.solution[x] }
 }
 
 fun MemberType.preInitSolution() {
-    (0..solutionLastIndex()).forEach { this.solution[it] = it }
+    (0 until solutionSize()).forEach { this.solution[it] = it }
 }
 
 fun MemberType.initSolution() {
-    this.preInitSolution().also { (0..solutionLastIndex()).forEach { _ -> this.tweakSolution() } }
+    this.preInitSolution().also { (0 until solutionSize()).forEach { _ -> this.tweakSolution() } }
 }
 
 fun MemberType.computeEnergy() {
@@ -26,7 +26,7 @@ fun MemberType.computeEnergy() {
     val dy = intArrayOf(-1, 1, 1, -1)
 
     val board = getBoard()
-    (0..solutionLastIndex()).forEach { x -> // for all solution line (numbers)
+    (0 until solutionSize()).forEach { x -> // for all solution line (numbers)
         (0..3).forEach { jj -> // NW then SE etc
             var tmpX = x
             var tmpY = this.solution[x]
@@ -41,6 +41,10 @@ fun MemberType.computeEnergy() {
     this.energy = conflictCount.toFloat()
 }
 
+fun MemberType.stringView() = getBoard().run {
+    this.indices.joinToString("") { this[it].contentToString() + "\n" }
+}
+
 fun MemberType.emitPrettySolution() {
     println(
         "\nThe Board:\n${
@@ -51,13 +55,9 @@ fun MemberType.emitPrettySolution() {
     )
 }
 
-fun MemberType.stringView() = getBoard().run {
-    this.indices.joinToString("") { this[it].contentToString() + "\n" }
-}
-
 private fun MemberType.getBoard() =
-    Array(solutionLastIndex() + 1) { BooleanArray(solutionLastIndex() + 1) }.also { bd ->
-        (0..solutionLastIndex()).forEach {
+    Array(solutionSize()) { BooleanArray(solutionSize()) }.also { bd ->
+        (0 until solutionSize()).forEach {
             bd[it][this.solution[it]] = true
         }
     }

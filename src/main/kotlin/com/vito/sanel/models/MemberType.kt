@@ -1,15 +1,15 @@
 package com.vito.sanel.models
 
-const val DEFAULT_MAX_BOARD_LENGTH = 30
+const val DEFAULT_MAX_BOARD_LENGTH = 50
 
 data class MemberType(
     val solution: IntArray = IntArray(DEFAULT_MAX_BOARD_LENGTH + 1),
     var energy: Float = -1F
 ) {
 
-    fun solutionLastIndex() = solution.size - 1
-
     fun solutionSize() = solution.size
+
+    fun clone() = MemberType(solution = solution.copyOf(), energy = energy)
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
