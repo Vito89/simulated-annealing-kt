@@ -3,11 +3,11 @@ package com.vito.sanel.models
 const val DEFAULT_MAX_BOARD_LENGTH = 50
 
 data class MemberType(
-    val solution: IntArray = IntArray(DEFAULT_MAX_BOARD_LENGTH + 1),
+    val solution: IntArray = IntArray(DEFAULT_MAX_BOARD_LENGTH),
     var energy: Float = -1F
 ) {
 
-    fun solutionSize() = solution.size
+    val solutionSize get() = solution.size
 
     fun clone() = MemberType(solution = solution.copyOf(), energy = energy)
 

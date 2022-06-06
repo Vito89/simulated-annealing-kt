@@ -12,7 +12,7 @@ class BrianLukeTest {
     @Test
     fun `should be different after one tweakSolution call`() {
         MemberType().run {
-            this.preInitSolution()
+            this.initDiagonalSolution()
             val initStateSolution = this.solution.copyOf()
             this.tweakSolution()
             assertEquals(initStateSolution.size, this.solution.size)
@@ -23,7 +23,7 @@ class BrianLukeTest {
     @Test
     fun `should be different after few tweakSolution call (low possible false test)`() {
         MemberType().run {
-            this.preInitSolution()
+            this.initDiagonalSolution()
             val initStateSolution = this.solution.copyOf()
             (0..5).forEach { _ -> this.tweakSolution() }
             assertEquals(initStateSolution.size, this.solution.size)
@@ -43,10 +43,7 @@ class BrianLukeTest {
     @Test
     fun `computeEnergy should be zero size two`() {
         MemberType(solution = intArrayOf(0, 1)).run {
-            this.computeEnergy().also {
-                assertNotEquals(0F, this.energy)
-                assertEquals(2F, this.energy)
-            }
+            this.computeEnergy().also { assertEquals(2F, this.energy) }
         }
     }
 
@@ -63,10 +60,7 @@ class BrianLukeTest {
     @Test
     fun `computeEnergy shouldn't be zero size three version1`() {
         MemberType(solution = intArrayOf(0, 2, 1)).run {
-            this.computeEnergy().also {
-                assertNotEquals(0F, this.energy)
-                assertEquals(2F, this.energy)
-            }
+            this.computeEnergy().also { assertEquals(2F, this.energy) }
         }
     }
 
@@ -83,11 +77,11 @@ class BrianLukeTest {
     fun `should be equals stringView size two`() {
         MemberType(solution = intArrayOf(0, 1)).run {
             this.stringView().also {
-                assertTrue(it.length > 10)
+                assertTrue(it.isNotBlank())
                 assertEquals("[true, false]\n[false, true]\n", it)
                 print(it)
             }
-            print(this.emitPrettySolution())
+            print(this.printPrettySolution())
         }
     }
 }

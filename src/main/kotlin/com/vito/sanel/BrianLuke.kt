@@ -4,20 +4,21 @@ import com.vito.sanel.models.MemberType
 import kotlin.random.Random
 
 fun MemberType.tweakSolution() {
-    val x = Random.nextInt(0, solutionSize() - 1)
-    var y = Random.nextInt(0, solutionSize() - 1)
+    val x = Random.nextInt(0, solutionSize)
+    var y = Random.nextInt(0, solutionSize)
     while (x == y) {
-        y = Random.nextInt(0, solutionSize() - 1)
+        y = Random.nextInt(0, solutionSize)
     }
-    this.solution[x] = this.solution[y].also { this.solution[y] = this.solution[x] }
+    solution[x] = solution[y].also { solution[y] = solution[x] }
 }
 
-fun MemberType.preInitSolution() {
-    (0 until solutionSize()).forEach { this.solution[it] = it }
+fun MemberType.initDiagonalSolution() {
+    (0 until solutionSize).forEach { solution[it] = it }
 }
 
 fun MemberType.initSolution() {
-    this.preInitSolution().also { (0 until solutionSize()).forEach { _ -> this.tweakSolution() } }
+    initDiagonalSolution()
+    repeat(solutionSize) { tweakSolution() }
 }
 
 fun MemberType.computeEnergy() {
@@ -26,14 +27,14 @@ fun MemberType.computeEnergy() {
     val dy = intArrayOf(-1, 1, 1, -1)
 
     val board = getBoard()
-    (0 until solutionSize()).forEach { x -> // for all solution line (numbers)
+    (0 until solutionSize).forEach { x -> // for all solution line (numbers)
         (0..3).forEach { jj -> // NW then SE etc
             var tmpX = x
-            var tmpY = this.solution[x]
+            var tmpY = solution[x]
             while (true) {
                 tmpX += dx[jj]
                 tmpY += dy[jj]
-                if ((tmpX < 0) || (tmpX >= solutionSize()) || (tmpY < 0) || (tmpY >= solutionSize())) break
+                if ((tmpX < 0) || (tmpX >= solutionSize) || (tmpY < 0) || (tmpY >= solutionSize)) break
                 if (board[tmpX][tmpY]) conflictCount++
             }
         }
@@ -45,9 +46,9 @@ fun MemberType.stringView() = getBoard().run {
     this.indices.joinToString("") { this[it].contentToString() + "\n" }
 }
 
-fun MemberType.emitPrettySolution() {
+fun MemberType.printPrettySolution() {
     println(
-        "\nThe Board:\n${
+        "\nThe Board with solution energy $energy:\n${
             stringView()
                 .replace("true", "Q")
                 .replace("false", "x")
@@ -56,8 +57,8 @@ fun MemberType.emitPrettySolution() {
 }
 
 private fun MemberType.getBoard() =
-    Array(solutionSize()) { BooleanArray(solutionSize()) }.also { bd ->
-        (0 until solutionSize()).forEach {
+    Array(solutionSize) { BooleanArray(solutionSize) }.also { bd ->
+        (0 until solutionSize).forEach {
             bd[it][this.solution[it]] = true
         }
     }
