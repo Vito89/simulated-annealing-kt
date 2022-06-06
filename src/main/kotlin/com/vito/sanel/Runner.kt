@@ -6,7 +6,7 @@ import java.time.LocalDateTime
 import kotlin.math.exp
 import kotlin.random.Random
 
-fun main(args: Array<String>) {
+fun main() {
     val start = LocalDateTime.now()
     println("Starting at: $start")
     Runner().generateBoard()
@@ -27,8 +27,8 @@ class Runner {
 
         while (temperature > FINAL_TEMPERATURE) {
             println("Current temperature is: $temperature")
-            var accepted = 0
-            repeat(STEPS_PER_CHANGE) { // TODO concurrency mode
+
+            repeat(STEPS_PER_CHANGE) {
                 var useNew = false
                 working.tweakSolution()
                 working.computeEnergy()
@@ -39,15 +39,12 @@ class Runner {
                     val randomFloat = Random.nextFloat() // warn about how much it will need
                     val delta = working.energy - current.energy
                     if (exp(-delta / temperature) > randomFloat) {
-                        accepted++
                         useNew = true
                     }
                 }
 
-//                    println("DEBUG: accepted:$accepted, useNew:$useNew")
                 if (useNew) {
                     current = working.clone()
-
                     if (current.energy < best.energy) {
                         println("Moving best solution with new energy: ${current.energy}")
                         best = current.clone()
@@ -57,7 +54,6 @@ class Runner {
                     working = current.clone()
                 }
             }
-//                println("Best energy is: ${best.energy}")
             temperature *= ALPHA
         }
         if (solutionFound) {
