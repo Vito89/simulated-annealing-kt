@@ -34,7 +34,7 @@ class BrianLukeTest {
     @Test
     fun `computeEnergy should be zero size one because of the edge`() {
         Board(solution = intArrayOf(0)).run {
-            this.computeEnergy().also {
+            this.computeAndSetEnergy().also {
                 assertEquals(0F, this.energy)
             }
         }
@@ -43,14 +43,14 @@ class BrianLukeTest {
     @Test
     fun `computeEnergy should be zero size two`() {
         Board(solution = intArrayOf(0, 1)).run {
-            this.computeEnergy().also { assertEquals(2F, this.energy) }
+            this.computeAndSetEnergy().also { assertEquals(2F, this.energy) }
         }
     }
 
     @Test
     fun `computeEnergy shouldn't be zero size three version0`() {
         Board(solution = intArrayOf(0, 1, 2)).run {
-            this.computeEnergy().also {
+            this.computeAndSetEnergy().also {
                 assertNotEquals(0F, this.energy)
                 assertEquals(6F, this.energy)
             }
@@ -60,14 +60,14 @@ class BrianLukeTest {
     @Test
     fun `computeEnergy shouldn't be zero size three version1`() {
         Board(solution = intArrayOf(0, 2, 1)).run {
-            this.computeEnergy().also { assertEquals(2F, this.energy) }
+            this.computeAndSetEnergy().also { assertEquals(2F, this.energy) }
         }
     }
 
     @Test
     fun `computeEnergy should be zero`() {
         Board(solution = intArrayOf(4, 6, 0, 3, 1, 7, 5, 2)).run {
-            this.computeEnergy().also {
+            this.computeAndSetEnergy().also {
                 assertEquals(0F, this.energy)
             }
         }

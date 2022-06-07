@@ -1,13 +1,18 @@
 package com.vito.sanel
 
 import com.vito.sanel.models.Board
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlin.math.exp
 import kotlin.random.Random
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.withContext
 
 const val INITIAL_TEMPERATURE = 30.0
-const val FINAL_TEMPERATURE = 0.3 // 0.5 for board size = 30
-const val ALPHA = 0.98
-const val STEPS_PER_CHANGE = 600 // 200 for board size = 30
+const val FINAL_TEMPERATURE = 0.4 // 0.5 for board size = 30
+const val ALPHA = 0.90
+const val STEPS_PER_CHANGE = 200 // 200 for board size = 30
 // Finished in: 6June: 2473 2137 2382 2391 2274
 // 7June AM: 1200-1300 (950)
 // 7June via gradle: 862 1K 746 844 816
@@ -15,12 +20,12 @@ const val STEPS_PER_CHANGE = 600 // 200 for board size = 30
 
 class BrianLuke {
 
-    fun generateBoardAndPrint() {
+    suspend fun generateBoardAndPrint() {
         var temperature = INITIAL_TEMPERATURE
         var solutionFound = false
         var current = Board().also {
             it.initSolution()
-            it.computeEnergy()
+            it.computeAndSetEnergy()
         }
         var working = current.clone()
         var best = Board(solution = intArrayOf(), energy = 100F)
@@ -31,8 +36,7 @@ class BrianLuke {
             repeat(STEPS_PER_CHANGE) {
                 var useNew = false
 
-                working.tweakSolution()
-                working.computeEnergy()
+                working = forkAndWork(working)
 
                 if (working.energy <= current.energy) {
                     useNew = true
@@ -61,4 +65,33 @@ class BrianLuke {
             best.printPrettySolution()
         }
     }
+
+    private suspend fun forkAndWork(working: Board): Board {
+        return doWork(List(5) { working.clone() }).first()
+    }
+
+    private suspend fun doWork(workings: Collection<Board>): List<Board> {
+        return withContext(Dispatchers.Default) {
+            workings.map { async { return@async tryTweakAndCompute(it) } }
+                .awaitAll().also { jbs ->
+                    jbs.minOf { it.energy }.also { minEnergy ->
+                        return@withContext jbs.filter { it.energy == minEnergy }
+                    }
+                }
+        }
+    }
+
+    private suspend fun tryTweakAndCompute(working: Board): Board =
+        try {
+            coroutineScope {
+                withContext(Dispatchers.Default) {
+                    working.tweakSolution()
+                    working.computeAndSetEnergy()
+                }
+                return@coroutineScope working
+            }
+        } catch (e: Exception) {
+            println("Error handled: ${e.message}")
+            Board(solution = intArrayOf(), energy = 100F)
+        }
 }
