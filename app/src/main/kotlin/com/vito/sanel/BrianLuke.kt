@@ -8,6 +8,10 @@ const val INITIAL_TEMPERATURE = 30.0
 const val FINAL_TEMPERATURE = 0.3 // 0.5 for board size = 30
 const val ALPHA = 0.98
 const val STEPS_PER_CHANGE = 600 // 200 for board size = 30
+// Finished in: 6June: 2473 2137 2382 2391 2274
+// 7June AM: 1200-1300 (950)
+// 7June via gradle: 862 1K 746 844 816
+//
 
 class BrianLuke {
 
@@ -26,6 +30,7 @@ class BrianLuke {
 
             repeat(STEPS_PER_CHANGE) {
                 var useNew = false
+
                 working.tweakSolution()
                 working.computeEnergy()
 

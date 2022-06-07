@@ -51,9 +51,9 @@ fun Board.stringView() = getBoard().run {
 fun Board.printPrettySolution() {
     println(
         "\nThe Board with solution energy $energy:\n${
-            stringView()
-                .replace("true", "Q")
-                .replace("false", "x")
+        stringView()
+            .replace("true", "Q")
+            .replace("false", "x")
         }"
     )
 }

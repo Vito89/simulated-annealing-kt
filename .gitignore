@@ -12,6 +12,7 @@ build
 *.iml
 .idea
 *.idea
+*.gradle
 checkstyle.cache
 out
 !/out/*
