@@ -1,65 +1,59 @@
 package com.vito.sanel
 
-import com.vito.sanel.models.MemberType
+import com.vito.sanel.models.Board
+import kotlin.math.exp
 import kotlin.random.Random
 
-fun MemberType.tweakSolution() {
-    val x = Random.nextInt(0, solutionSize)
-    var y = Random.nextInt(0, solutionSize)
-    while (x == y) {
-        y = Random.nextInt(0, solutionSize)
-    }
-    solution[x] = solution[y].also { solution[y] = solution[x] }
-}
+const val INITIAL_TEMPERATURE = 30.0
+const val FINAL_TEMPERATURE = 0.3 // 0.5 for board size = 30
+const val ALPHA = 0.98
+const val STEPS_PER_CHANGE = 600 // 200 for board size = 30
 
-fun MemberType.initDiagonalSolution() {
-    (0 until solutionSize).forEach { solution[it] = it }
-}
+class BrianLuke {
 
-fun MemberType.initSolution() {
-    initDiagonalSolution()
-    repeat(solutionSize) { tweakSolution() }
-}
-
-fun MemberType.computeEnergy() {
-    this.energy = (0 until solutionSize).sumOf { x ->
-        (0..3).sumOf { dIdx -> // NW then SE etc
-            conflictCounting(x, dIdx)
+    fun generateBoardAndPrint() {
+        var temperature = INITIAL_TEMPERATURE
+        var solutionFound = false
+        var current = Board().also {
+            it.initSolution()
+            it.computeEnergy()
         }
-    }.toFloat()
-}
+        var working = current.clone()
+        var best = Board(solution = intArrayOf(), energy = 100F)
 
-val dx = intArrayOf(-1, 1, -1, 1)
-val dy = intArrayOf(-1, 1, 1, -1)
-private fun MemberType.conflictCounting(x: Int, dIdx: Int): Int {
-    var conflictCount = 0
-    var tmpX = x
-    var tmpY = solution[x]
-    while (true) {
-        tmpX += dx[dIdx] // move by abscissa
-        tmpY += dy[dIdx] // move by ordinatus
-        if ((tmpX < 0) || (tmpX >= solutionSize) || (tmpY < 0) || (tmpY >= solutionSize)) return conflictCount
-        if (cellContainQueen(tmpX, tmpY)) conflictCount++
-    }
-}
+        while (temperature > FINAL_TEMPERATURE) {
+            println("Current temperature is: $temperature")
 
-fun MemberType.stringView() = getBoard().run {
-    this.indices.joinToString("") { this[it].contentToString() + "\n" }
-}
+            repeat(STEPS_PER_CHANGE) {
+                var useNew = false
+                working.tweakSolution()
+                working.computeEnergy()
 
-fun MemberType.printPrettySolution() {
-    println(
-        "\nThe Board with solution energy $energy:\n${
-            stringView()
-                .replace("true", "Q")
-                .replace("false", "x")
-        }"
-    )
-}
+                if (working.energy <= current.energy) {
+                    useNew = true
+                } else {
+                    val randomFloat = Random.nextFloat() // warn about how much it will need
+                    val delta = working.energy - current.energy
+                    if (exp(-delta / temperature) > randomFloat) {
+                        useNew = true
+                    }
+                }
 
-private fun MemberType.getBoard() =
-    Array(solutionSize) { BooleanArray(solutionSize) }.also { bd ->
-        (0 until solutionSize).forEach {
-            bd[it][this.solution[it]] = true
+                if (useNew) {
+                    current = working.clone()
+                    if (current.energy < best.energy) {
+                        println("Moving best solution with new energy: ${current.energy}")
+                        best = current.clone()
+                        solutionFound = true
+                    }
+                } else {
+                    working = current.clone()
+                }
+            }
+            temperature *= ALPHA
+        }
+        if (solutionFound) {
+            best.printPrettySolution()
         }
     }
+}

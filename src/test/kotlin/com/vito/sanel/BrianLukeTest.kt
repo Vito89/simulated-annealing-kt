@@ -1,6 +1,6 @@
 package com.vito.sanel
 
-import com.vito.sanel.models.MemberType
+import com.vito.sanel.models.Board
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertNotEquals
@@ -11,7 +11,7 @@ class BrianLukeTest {
 
     @Test
     fun `should be different after one tweakSolution call`() {
-        MemberType().run {
+        Board().run {
             this.initDiagonalSolution()
             val initStateSolution = this.solution.copyOf()
             this.tweakSolution()
@@ -22,7 +22,7 @@ class BrianLukeTest {
 
     @Test
     fun `should be different after few tweakSolution call (low possible false test)`() {
-        MemberType().run {
+        Board().run {
             this.initDiagonalSolution()
             val initStateSolution = this.solution.copyOf()
             (0..5).forEach { _ -> this.tweakSolution() }
@@ -33,7 +33,7 @@ class BrianLukeTest {
 
     @Test
     fun `computeEnergy should be zero size one because of the edge`() {
-        MemberType(solution = intArrayOf(0)).run {
+        Board(solution = intArrayOf(0)).run {
             this.computeEnergy().also {
                 assertEquals(0F, this.energy)
             }
@@ -42,14 +42,14 @@ class BrianLukeTest {
 
     @Test
     fun `computeEnergy should be zero size two`() {
-        MemberType(solution = intArrayOf(0, 1)).run {
+        Board(solution = intArrayOf(0, 1)).run {
             this.computeEnergy().also { assertEquals(2F, this.energy) }
         }
     }
 
     @Test
     fun `computeEnergy shouldn't be zero size three version0`() {
-        MemberType(solution = intArrayOf(0, 1, 2)).run {
+        Board(solution = intArrayOf(0, 1, 2)).run {
             this.computeEnergy().also {
                 assertNotEquals(0F, this.energy)
                 assertEquals(6F, this.energy)
@@ -59,14 +59,14 @@ class BrianLukeTest {
 
     @Test
     fun `computeEnergy shouldn't be zero size three version1`() {
-        MemberType(solution = intArrayOf(0, 2, 1)).run {
+        Board(solution = intArrayOf(0, 2, 1)).run {
             this.computeEnergy().also { assertEquals(2F, this.energy) }
         }
     }
 
     @Test
     fun `computeEnergy should be zero`() {
-        MemberType(solution = intArrayOf(4, 6, 0, 3, 1, 7, 5, 2)).run {
+        Board(solution = intArrayOf(4, 6, 0, 3, 1, 7, 5, 2)).run {
             this.computeEnergy().also {
                 assertEquals(0F, this.energy)
             }
@@ -75,7 +75,7 @@ class BrianLukeTest {
 
     @Test
     fun `should be equals stringView size two`() {
-        MemberType(solution = intArrayOf(0, 1)).run {
+        Board(solution = intArrayOf(0, 1)).run {
             this.stringView().also {
                 assertTrue(it.isNotBlank())
                 assertEquals("[true, false]\n[false, true]\n", it)

@@ -6,7 +6,7 @@ import java.time.LocalDateTime
 fun main() {
     LocalDateTime.now().also {
         println("Starting at: $it")
-        BoardGenerator().generateAndPrint()
+        BrianLuke().generateBoardAndPrint()
         println("Finished in: " + Duration.between(it, LocalDateTime.now()).toMillis() + " milliseconds")
     }
 }
