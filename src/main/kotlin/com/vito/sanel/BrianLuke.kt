@@ -39,7 +39,7 @@ private fun MemberType.conflictCounting(x: Int, dIdx: Int): Int {
         tmpX += dx[dIdx] // move by abscissa
         tmpY += dy[dIdx] // move by ordinatus
         if ((tmpX < 0) || (tmpX >= solutionSize) || (tmpY < 0) || (tmpY >= solutionSize)) return conflictCount
-        if (solution[tmpX] == tmpY) conflictCount++ // the same as board[tmpX][tmpY] == true
+        if (cellContainQueen(tmpX, tmpY)) conflictCount++
     }
 }
 

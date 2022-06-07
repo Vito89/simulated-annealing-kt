@@ -9,6 +9,8 @@ data class MemberType(
 
     val solutionSize get() = solution.size
 
+    fun cellContainQueen(x: Int, y: Int): Boolean = solution[x] == y
+
     fun clone() = MemberType(solution = solution.copyOf(), energy = energy)
 
     override fun equals(other: Any?): Boolean {
