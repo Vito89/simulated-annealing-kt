@@ -22,24 +22,26 @@ fun MemberType.initSolution() {
 }
 
 fun MemberType.computeEnergy() {
-    var conflictCount = 0
-    val dx = intArrayOf(-1, 1, -1, 1)
-    val dy = intArrayOf(-1, 1, 1, -1)
-
     val board = getBoard()
-    (0 until solutionSize).forEach { x -> // for all solution line (numbers)
-        (0..3).forEach { jj -> // NW then SE etc
-            var tmpX = x
-            var tmpY = solution[x]
-            while (true) {
-                tmpX += dx[jj]
-                tmpY += dy[jj]
-                if ((tmpX < 0) || (tmpX >= solutionSize) || (tmpY < 0) || (tmpY >= solutionSize)) break
-                if (board[tmpX][tmpY]) conflictCount++
-            }
+    this.energy = (0 until solutionSize).sumOf { x ->
+        (0..3).sumOf { dIdx -> // NW then SE etc
+            conflictCounting(x, dIdx, board)
         }
+    }.toFloat()
+}
+
+val dx = intArrayOf(-1, 1, -1, 1)
+val dy = intArrayOf(-1, 1, 1, -1)
+private fun MemberType.conflictCounting(x: Int, dIdx: Int, board: Array<BooleanArray>): Int {
+    var conflictCount = 0
+    var tmpX = x
+    var tmpY = solution[x]
+    while (true) {
+        tmpX += dx[dIdx] // move by abscissa
+        tmpY += dy[dIdx] // move by ordinatus
+        if ((tmpX < 0) || (tmpX >= solutionSize) || (tmpY < 0) || (tmpY >= solutionSize)) return conflictCount
+        if (board[tmpX][tmpY]) conflictCount++
     }
-    this.energy = conflictCount.toFloat()
 }
 
 fun MemberType.stringView() = getBoard().run {
