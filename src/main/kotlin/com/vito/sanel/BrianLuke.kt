@@ -22,17 +22,16 @@ fun MemberType.initSolution() {
 }
 
 fun MemberType.computeEnergy() {
-    val board = getBoard()
     this.energy = (0 until solutionSize).sumOf { x ->
         (0..3).sumOf { dIdx -> // NW then SE etc
-            conflictCounting(x, dIdx, board)
+            conflictCounting(x, dIdx)
         }
     }.toFloat()
 }
 
 val dx = intArrayOf(-1, 1, -1, 1)
 val dy = intArrayOf(-1, 1, 1, -1)
-private fun MemberType.conflictCounting(x: Int, dIdx: Int, board: Array<BooleanArray>): Int {
+private fun MemberType.conflictCounting(x: Int, dIdx: Int): Int {
     var conflictCount = 0
     var tmpX = x
     var tmpY = solution[x]
@@ -40,7 +39,7 @@ private fun MemberType.conflictCounting(x: Int, dIdx: Int, board: Array<BooleanA
         tmpX += dx[dIdx] // move by abscissa
         tmpY += dy[dIdx] // move by ordinatus
         if ((tmpX < 0) || (tmpX >= solutionSize) || (tmpY < 0) || (tmpY >= solutionSize)) return conflictCount
-        if (board[tmpX][tmpY]) conflictCount++
+        if (solution[tmpX] == tmpY) conflictCount++ // the same as board[tmpX][tmpY] == true
     }
 }
 
