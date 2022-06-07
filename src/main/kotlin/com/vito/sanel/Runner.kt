@@ -1,11 +1,12 @@
 package com.vito.sanel
 
-class Runner {
+import java.time.Duration
+import java.time.LocalDateTime
 
-    companion object {
-        @JvmStatic fun main(args : Array<String>) {
-            println("Ok")
-        }
+fun main() {
+    LocalDateTime.now().also {
+        println("Starting at: $it")
+        BrianLuke().generateBoardAndPrint()
+        println("Finished in: " + Duration.between(it, LocalDateTime.now()).toMillis() + " milliseconds")
     }
-
 }

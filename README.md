@@ -1,2 +1,1 @@
-# simulated-annealing-kt
-Simulated Annealing Brian Luke implementation
+# Simulated Annealing Brian Luke implementation

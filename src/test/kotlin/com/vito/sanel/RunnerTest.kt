@@ -6,7 +6,7 @@ import kotlin.test.assertNotNull
 class RunnerTest {
 
     @Test
-    fun simpleTest() {
+    fun contextTest() {
         assertNotNull(this)
     }
 }
