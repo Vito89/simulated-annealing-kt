@@ -81,7 +81,7 @@ class BrianLukeTest {
                 assertEquals("[true, false]\n[false, true]\n", it)
                 print(it)
             }
-            print(this.printPrettySolution())
+            print(this.printPrettySolution(0.0, 0))
         }
     }
 }
