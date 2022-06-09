@@ -6,17 +6,16 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlin.math.exp
 import kotlin.random.Random
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.withContext
 
 const val INITIAL_TEMPERATURE = 30.0
-const val FINAL_TEMPERATURE = 0.4 // 0.5 for board size = 30
-const val ALPHA = 0.90
+const val FINAL_TEMPERATURE = 0.3 // 0.5 for board size = 30
+const val ALPHA = 0.92
 const val STEPS_PER_CHANGE = 200 // 200 for board size = 30
-// Finished in: 6June: 2473 2137 2382 2391 2274
-// 7June AM: 1200-1300 (950)
+// 6June: 2473 2137 2382 2391 2274
+// 7June AM: 1200-1300 (min 950) (after optimization)
 // 7June via gradle: 862 1K 746 844 816
-//
+// 8June with parallel mode: 1855 1979 1876 1946
 
 class BrianLuke {
 
@@ -83,12 +82,11 @@ class BrianLuke {
 
     private suspend fun tryTweakAndCompute(working: Board): Board =
         try {
-            coroutineScope {
-                withContext(Dispatchers.Default) {
-                    working.tweakSolution()
-                    working.computeAndSetEnergy()
+            withContext(Dispatchers.Default) {
+                working.apply {
+                    tweakSolution()
+                    computeAndSetEnergy()
                 }
-                return@coroutineScope working
             }
         } catch (e: Exception) {
             println("Error handled: ${e.message}")
