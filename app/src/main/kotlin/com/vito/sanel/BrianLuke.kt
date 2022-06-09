@@ -4,14 +4,15 @@ import com.vito.sanel.models.Board
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.withContext
 import kotlin.math.exp
 import kotlin.random.Random
-import kotlinx.coroutines.withContext
 
 const val INITIAL_TEMPERATURE = 30.0
 const val FINAL_TEMPERATURE = 0.3 // 0.5 for board size = 30
 const val ALPHA = 0.92
 const val STEPS_PER_CHANGE = 200 // 200 for board size = 30
+const val PARALLEL_MODE_IS_ON = true
 // 6June: 2473 2137 2382 2391 2274
 // 7June AM: 1200-1300 (min 950) (after optimization)
 // 7June via gradle: 862 1K 746 844 816
@@ -65,9 +66,15 @@ class BrianLuke {
         }
     }
 
-    private suspend fun forkAndWork(working: Board): Board {
-        return doWork(List(5) { working.clone() }).first()
-    }
+    private suspend fun forkAndWork(working: Board): Board =
+        if (PARALLEL_MODE_IS_ON) {
+            doWork(List(5) { working.clone() }).first()
+        } else {
+            working.apply {
+                tweakSolution()
+                computeEnergy()
+            }
+        }
 
     private suspend fun doWork(workings: Collection<Board>): List<Board> {
         return withContext(Dispatchers.Default) {
