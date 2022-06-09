@@ -50,9 +50,9 @@ fun Board.stringView() = getBoard().run {
     this.indices.joinToString("") { this[it].contentToString() + "\n" }
 }
 
-fun Board.printPrettySolution() {
+fun Board.printPrettySolution(temperature: Double, acceptedCount: Int) {
     println(
-        "\nThe Board with solution energy $energy:\n${
+        "\nThe Board with solution energy $energy, temperature $temperature, acceptedByTolerance $acceptedCount:\n${
         stringView()
             .replace("true", "Q")
             .replace("false", "x")
