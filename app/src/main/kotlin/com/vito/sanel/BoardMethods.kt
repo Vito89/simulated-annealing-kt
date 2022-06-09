@@ -21,13 +21,15 @@ fun Board.initSolution() {
     repeat(solutionSize) { tweakSolution() }
 }
 
-fun Board.computeEnergy() {
-    this.energy = (0 until solutionSize).sumOf { x ->
-        (0..3).sumOf { dIdx -> // NW then SE etc
-            computeConflictsOnDiagonal(x, dIdx)
-        }
-    }.toFloat()
+fun Board.computeAndSetEnergy() {
+    this.energy = computeEnergy()
 }
+
+fun Board.computeEnergy() = (0 until solutionSize).sumOf { x ->
+    (0..3).sumOf { dIdx -> // NW then SE etc
+        computeConflictsOnDiagonal(x, dIdx)
+    }
+}.toFloat()
 
 val dx = intArrayOf(-1, 1, -1, 1)
 val dy = intArrayOf(-1, 1, 1, -1)
@@ -51,9 +53,9 @@ fun Board.stringView() = getBoard().run {
 fun Board.printPrettySolution() {
     println(
         "\nThe Board with solution energy $energy:\n${
-            stringView()
-                .replace("true", "Q")
-                .replace("false", "x")
+        stringView()
+            .replace("true", "Q")
+            .replace("false", "x")
         }"
     )
 }
