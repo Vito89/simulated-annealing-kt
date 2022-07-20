@@ -12,12 +12,15 @@ const val INITIAL_TEMPERATURE = 0.4
 const val FINAL_TEMPERATURE = 0.27
 const val ALPHA = 0.98
 const val STEPS_PER_CHANGE = 400
+const val DEFAULT_ENERGY = 100F
+
 const val PARALLEL_MODE_IS_ON = false
-// 6June: 2473 2137 2382 2391 2274
-// 7June AM: 1200-1300 (min 950) (after optimization)
-// 7June via gradle: 862 1K 746 844 816
-// 8June with parallel mode: 1855 1979 1876 1946
-// 9June without parallel mode but improved conf: 189 - 376
+const val THREAD_COUNT = 5
+// 6June: 2473 2137 2382 2391 2274 ms
+// 7June AM: 1200-1300 ms (min 950) (after optimization)
+// 7June via gradle: 862 1K 746 844 816 ms
+// 8June with parallel mode: 1855 1979 1876 1946 ms
+// 9June without parallel mode but improved conf: 189 - 376 ms
 
 class BrianLuke {
 
@@ -29,9 +32,9 @@ class BrianLuke {
             it.computeAndSetEnergy()
         }
         var working = current.clone()
-        var best = Board(solution = intArrayOf(), energy = 100F)
+        var best = Board(solution = intArrayOf(), energy = DEFAULT_ENERGY)
         var bestTemperature = -1.0
-        var acceptedByTolerance = 0
+        var acceptedByToleranceTimes = 0
 
         while (temperature > FINAL_TEMPERATURE) {
             println("Current temperature is: $temperature")
@@ -47,7 +50,7 @@ class BrianLuke {
                     val delta = working.energy - current.energy
                     if (exp(-delta / temperature) > randomFloat) {
                         useNew = true
-                        acceptedByTolerance++
+                        acceptedByToleranceTimes++
                     }
                 }
 
@@ -66,13 +69,13 @@ class BrianLuke {
             temperature *= ALPHA
         }
         if (solutionFound) {
-            best.printPrettySolution(bestTemperature, acceptedByTolerance)
+            best.printPrettySolution(bestTemperature, acceptedByToleranceTimes)
         }
     }
 
     private suspend fun forkAndWork(working: Board): Board =
         if (PARALLEL_MODE_IS_ON) {
-            doWork(List(5) { working.clone() }).first()
+            doWork(List(THREAD_COUNT) { working.clone() }).first()
         } else {
             working.apply {
                 tweakSolution()
@@ -83,9 +86,9 @@ class BrianLuke {
     private suspend fun doWork(workings: Collection<Board>): List<Board> {
         return withContext(Dispatchers.Default) {
             workings.map { async { return@async tryTweakAndCompute(it) } }
-                .awaitAll().also { jbs ->
-                    jbs.minOf { it.energy }.also { minEnergy ->
-                        return@withContext jbs.filter { it.energy == minEnergy }
+                .awaitAll().also { boards ->
+                    boards.minOf { it.energy }.also { minEnergy ->
+                        return@withContext boards.filter { it.energy == minEnergy }
                     }
                 }
         }
@@ -101,6 +104,6 @@ class BrianLuke {
             }
         } catch (e: Exception) {
             println("Error handled: ${e.message}")
-            Board(solution = intArrayOf(), energy = 100F)
+            Board(solution = intArrayOf(), energy = DEFAULT_ENERGY)
         }
 }
