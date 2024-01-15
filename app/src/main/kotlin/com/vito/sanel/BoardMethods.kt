@@ -53,10 +53,10 @@ fun Board.stringView() = getBoard().run {
 fun Board.printPrettySolution(temperature: Double, acceptedCount: Int) {
     println(
         "\nThe Board with solution energy $energy, temperature $temperature, acceptedByTolerance $acceptedCount:\n${
-        stringView()
-            .replace("true", "Q")
-            .replace("false", "x")
-        }"
+            stringView()
+                .replace("true", "Q")
+                .replace("false", "x")
+        }",
     )
 }
 

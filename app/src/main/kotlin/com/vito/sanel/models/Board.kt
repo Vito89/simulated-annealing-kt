@@ -4,7 +4,7 @@ const val DEFAULT_MAX_BOARD_LENGTH = 50
 
 data class Board(
     val solution: IntArray = IntArray(DEFAULT_MAX_BOARD_LENGTH),
-    var energy: Float = -1F
+    var energy: Float = -1F,
 ) {
 
     val solutionSize get() = solution.size
