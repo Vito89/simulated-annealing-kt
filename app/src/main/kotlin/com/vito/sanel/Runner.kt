@@ -1,15 +1,15 @@
 package com.vito.sanel
 
 import kotlinx.coroutines.runBlocking
-import java.time.Duration
-import java.time.LocalDateTime
+import java.util.concurrent.TimeUnit
+import kotlin.system.measureTimeMillis
 
 fun main() {
-    LocalDateTime.now().also {
-        println("Starting at: $it")
+    measureTimeMillis {
         runBlocking {
             BrianLuke().generateBoardAndPrint()
         }
-        println("Finished in: " + Duration.between(it, LocalDateTime.now()).toMillis() + " milliseconds")
+    }.also {
+        println("Time measure for generateBoardAndPrint is: ${TimeUnit.MILLISECONDS.toMillis(it)} milliseconds")
     }
 }

@@ -18,14 +18,14 @@ data class Board(
         if (other !is Board) return false
 
         if (!solution.contentEquals(other.solution)) return false
-        if (energy != other.energy) return false
 
-        return true
+        return energy == other.energy
     }
 
     override fun hashCode(): Int {
         var result = solution.contentHashCode()
         result = 31 * result + energy.hashCode()
+
         return result
     }
 }
