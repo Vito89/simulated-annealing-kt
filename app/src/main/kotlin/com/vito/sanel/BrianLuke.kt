@@ -25,59 +25,60 @@ const val THREAD_COUNT = 5
 class BrianLuke {
 
     suspend fun generateBoardAndPrint() {
-        var temperature = INITIAL_TEMPERATURE
         var solutionFound = false
-        var current = Board().also {
+        var currentBoardSolution = Board().also {
             it.initSolution()
             it.computeAndSetEnergy()
         }
-        var working = current.clone()
-        var best = Board(solution = intArrayOf(), energy = DEFAULT_ENERGY)
+        var newBoardSolution = currentBoardSolution.clone()
+        var bestBoardSolution = Board(solution = intArrayOf(), energy = DEFAULT_ENERGY)
         var bestTemperature = -1.0
         var acceptedByToleranceTimes = 0
+        var currentTemperature = INITIAL_TEMPERATURE
 
-        while (temperature > FINAL_TEMPERATURE) {
-            println("Current temperature is: $temperature")
+        while (currentTemperature > FINAL_TEMPERATURE) {
+            println("Current temperature is: $currentTemperature")
 
             repeat(STEPS_PER_CHANGE) {
                 var useNew = false
-                working = forkAndWork(working)
+                newBoardSolution = forkAndWork(workSolution = newBoardSolution)
 
-                if (working.energy <= current.energy) {
+                if (newBoardSolution.energy <= currentBoardSolution.energy) {
                     useNew = true
                 } else {
                     val randomFloat = Random.nextFloat()
-                    val delta = working.energy - current.energy
-                    if (exp(-delta / temperature) > randomFloat) {
+                    val delta = newBoardSolution.energy - currentBoardSolution.energy
+                    if (exp(-delta / currentTemperature) > randomFloat) {
                         useNew = true
                         acceptedByToleranceTimes++
                     }
                 }
 
                 if (useNew) {
-                    current = working.clone()
-                    if (current.energy < best.energy) {
-                        println("Moving best solution with new energy: ${current.energy}")
-                        best = current.clone()
-                        bestTemperature = temperature
+                    currentBoardSolution = newBoardSolution.clone()
+                    if (currentBoardSolution.energy < bestBoardSolution.energy) {
+                        println("Moving best solution with new energy: ${currentBoardSolution.energy}")
+                        bestBoardSolution = currentBoardSolution.clone()
+                        bestTemperature = currentTemperature
                         solutionFound = true
                     }
                 } else {
-                    working = current.clone()
+                    newBoardSolution = currentBoardSolution.clone()
                 }
             }
-            temperature *= ALPHA
+            currentTemperature *= ALPHA
         }
         if (solutionFound) {
-            best.printPrettySolution(bestTemperature, acceptedByToleranceTimes)
+            bestBoardSolution.printPrettySolution(bestTemperature, acceptedByToleranceTimes)
         }
     }
 
-    private suspend fun forkAndWork(working: Board): Board =
+    private suspend fun forkAndWork(workSolution: Board): Board =
         if (PARALLEL_MODE_IS_ON) {
-            doWork(List(THREAD_COUNT) { working.clone() }).first()
+            val a = doWork(List(THREAD_COUNT) { workSolution.clone() })
+            a.first() // TODO check all of the elements
         } else {
-            working.apply {
+            workSolution.apply {
                 tweakSolution()
                 computeAndSetEnergy()
             }
