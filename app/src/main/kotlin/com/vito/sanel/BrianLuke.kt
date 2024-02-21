@@ -21,6 +21,7 @@ const val THREAD_COUNT = 5
 // 7June via gradle: 862 1K 746 844 816 ms
 // 8June with parallel mode: 1855 1979 1876 1946 ms
 // 9June without parallel mode but improved conf: 189 - 376 ms
+// 21Feb without parallel mode: 103ms (with parallel mode 605ms)
 
 class BrianLuke {
 
@@ -75,8 +76,7 @@ class BrianLuke {
 
     private suspend fun forkAndWork(workSolution: Board): Board =
         if (PARALLEL_MODE_IS_ON) {
-            val a = doWork(List(THREAD_COUNT) { workSolution.clone() })
-            a.first() // TODO check all of the elements
+            doWork(List(THREAD_COUNT) { workSolution.clone() })
         } else {
             workSolution.apply {
                 tweakSolution()
@@ -84,27 +84,29 @@ class BrianLuke {
             }
         }
 
-    private suspend fun doWork(workings: Collection<Board>): List<Board> {
+    private suspend fun doWork(workSolutions: Collection<Board>): Board {
         return withContext(Dispatchers.Default) {
-            workings.map { async { return@async tryTweakAndCompute(it) } }
-                .awaitAll().also { boards ->
-                    boards.minOf { it.energy }.also { minEnergy ->
-                        return@withContext boards.filter { it.energy == minEnergy }
-                    }
-                }
+            val tweakedBoards = workSolutions.map { async { return@async tryTweakAndCompute(it) } }.awaitAll()
+            val minOldEnergy = workSolutions.minOf { it.energy }
+            val minEnergy = tweakedBoards.minOf { it.energy }
+            if (minOldEnergy != minEnergy) {
+                println("Error handled: minOldEnergy $minOldEnergy differentThan minEnergy $minEnergy")
+                throw IllegalStateException("Error handled: minOldEnergy $minOldEnergy differentThan minEnergy $minEnergy")
+            }
+            return@withContext tweakedBoards.first { it.energy == minEnergy }
         }
     }
 
-    private suspend fun tryTweakAndCompute(working: Board): Board =
+    private suspend fun tryTweakAndCompute(board: Board): Board =
         try {
             withContext(Dispatchers.Default) {
-                working.apply {
+                board.apply {
                     tweakSolution()
                     computeAndSetEnergy()
                 }
             }
         } catch (e: Exception) {
             println("Error handled: ${e.message}")
-            Board(solution = intArrayOf(), energy = DEFAULT_ENERGY)
+            throw IllegalStateException("Error handled: ${e.message}")
         }
 }
