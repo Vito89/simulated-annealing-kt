@@ -38,7 +38,7 @@ class BrianLuke {
         var acceptedByToleranceTimes = 0
         var currentTemperature = INITIAL_TEMPERATURE
 
-        while (currentTemperature > FINAL_TEMPERATURE) {
+        while ((currentTemperature > FINAL_TEMPERATURE) && (bestBoardSolution.energy != 0F)) {
             println("Current temperature is: $currentTemperature")
 
             repeat(STEPS_PER_CHANGE) {
