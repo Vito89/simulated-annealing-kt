@@ -3,6 +3,8 @@ package com.vito.sanel
 import com.vito.sanel.models.Board
 import kotlin.random.Random
 
+private const val MAX_DIAGONAL_COUNT = 3
+
 fun Board.initSolution() {
     initDiagonalSolution()
     repeat(solutionSize) { tweakSolution() }
@@ -21,12 +23,10 @@ fun Board.tweakSolution() {
     solution[x] = solution[y].also { solution[y] = solution[x] }
 }
 
-fun Board.computeAndSetEnergy() {
-    this.energy = computeEnergy()
-}
+fun Board.computeAndSetEnergy() { this.energy = computeEnergy() }
 
 fun Board.computeEnergy() = (0 until solutionSize).sumOf { x ->
-    (0..3).sumOf { dIdx -> // Check only four ways as diagonals: NW then SE etc
+    (0..MAX_DIAGONAL_COUNT).sumOf { dIdx -> // Check only four ways as diagonals: NW then SE etc
         computeConflictsOnDiagonal(
             board = this,
             x,
@@ -51,17 +51,6 @@ private fun computeConflictsOnDiagonal(board: Board, x: Int, diagonalIndex: Int)
     }
 }
 
-private fun Board.getBoard() = // get matrix represent boolean type
-    Array(solutionSize) { BooleanArray(solutionSize) }.also { bd ->
-        (0 until solutionSize).forEach {
-            bd[it][this.solution[it]] = true
-        }
-    }
-
-fun Board.stringView() = getBoard().run {
-    this.indices.joinToString("") { this[it].contentToString() + "\n" }
-}
-
 fun Board.printPrettySolution(
     temperature: Double,
     acceptedCount: Int,
@@ -70,6 +59,17 @@ fun Board.printPrettySolution(
     println(
         "The solution $prefix found!\n" +
             "The Board with solution energy $energy, temperature $temperature, acceptedByTolerance $acceptedCount:\n" +
-            stringView().replace("true", "Q").replace("false", "x"),
+            stringMatrixView().replace("true", "Q").replace("false", "x"),
     )
 }
+
+fun Board.stringMatrixView() = getBoardAsMatrix(this).run {
+    this.indices.joinToString("") { this[it].contentToString() + "\n" }
+}
+
+private fun getBoardAsMatrix(board: Board): Array<BooleanArray> =
+    Array(board.solutionSize) { BooleanArray(board.solutionSize) }.also { bd ->
+        (0 until board.solutionSize).forEach {
+            bd[it][board.solution[it]] = true
+        }
+    }

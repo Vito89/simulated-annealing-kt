@@ -17,12 +17,6 @@ const val DEFAULT_ENERGY = 100F
 
 const val PARALLEL_MODE_IS_ON = false
 const val THREAD_COUNT = 5
-// 6June: 2473 2137 2382 2391 2274 ms
-// 7June AM: 1200-1300 ms (min 950) (after optimization)
-// 7June via gradle: 862 1K 746 844 816 ms
-// 8June with parallel mode: 1855 1979 1876 1946 ms
-// 9June without parallel mode but improved conf: 189 - 376 ms
-// 21Feb without parallel mode: 103ms (with parallel mode 605ms)
 
 class BrianLuke {
 
@@ -90,19 +84,17 @@ class BrianLuke {
             }
         }
 
-    private suspend fun doWork(workSolutions: Collection<Board>): Board {
-        return withContext(Dispatchers.Default) {
-            val tweakedBoards = workSolutions.map { async { return@async tryTweakAndCompute(it) } }.awaitAll()
-            val minOldEnergy = workSolutions.minOf { it.energy }
-            val minEnergy = tweakedBoards.minOf { it.energy }
-            if (minOldEnergy != minEnergy) {
-                with("Error handled: minOldEnergy $minOldEnergy differentThan minEnergy $minEnergy") {
-                    println(this)
-                    throw IllegalStateException(this)
-                }
+    private suspend fun doWork(workSolutions: Collection<Board>): Board = withContext(Dispatchers.Default) {
+        val tweakedBoards = workSolutions.map { async { return@async tryTweakAndCompute(it) } }.awaitAll()
+        val minOldEnergy = workSolutions.minOf { it.energy }
+        val minEnergy = tweakedBoards.minOf { it.energy }
+        if (minOldEnergy != minEnergy) {
+            with("Error handled: minOldEnergy $minOldEnergy differentThan minEnergy $minEnergy") {
+                println(this)
+                throw IllegalStateException(this)
             }
-            return@withContext tweakedBoards.first { it.energy == minEnergy }
         }
+        return@withContext tweakedBoards.first { it.energy == minEnergy }
     }
 
     private suspend fun tryTweakAndCompute(board: Board): Board =

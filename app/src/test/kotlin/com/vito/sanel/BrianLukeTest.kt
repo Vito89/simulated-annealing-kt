@@ -76,7 +76,7 @@ class BrianLukeTest {
     @Test
     fun `should be equals stringView size two`() {
         Board(solution = intArrayOf(0, 1)).run {
-            this.stringView().also {
+            this.stringMatrixView().also {
                 assertTrue(it.isNotBlank())
                 assertEquals("[true, false]\n[false, true]\n", it)
                 print(it)
