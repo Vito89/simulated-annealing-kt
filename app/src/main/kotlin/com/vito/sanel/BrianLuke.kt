@@ -27,12 +27,11 @@ const val THREAD_COUNT = 5
 class BrianLuke {
 
     suspend fun generateBoardAndPrint(boardLength: Int = DEFAULT_MAX_BOARD_LENGTH) {
-        var solutionFound = false
+        var anySolutionFound = false
         var currentBoardSolution = Board(solution = IntArray(boardLength), energy = DEFAULT_ENERGY)
-            .also {
-                it.initSolution()
-                it.computeAndSetEnergy()
-        }
+        currentBoardSolution.initSolution()
+        currentBoardSolution.computeAndSetEnergy()
+
         var newBoardSolution = currentBoardSolution.clone()
         var bestBoardSolution = Board(solution = intArrayOf(boardLength), energy = DEFAULT_ENERGY)
         var bestTemperature = -1.0
@@ -43,27 +42,27 @@ class BrianLuke {
             println("Current temperature is: $currentTemperature")
 
             repeat(STEPS_PER_CHANGE) {
-                var useNew = false
+                var mustUseNewBoardSolution = false
                 newBoardSolution = forkAndWork(workSolution = newBoardSolution)
 
                 if (newBoardSolution.energy <= currentBoardSolution.energy) {
-                    useNew = true
+                    mustUseNewBoardSolution = true
                 } else {
                     val randomFloat = Random.nextFloat()
                     val delta = newBoardSolution.energy - currentBoardSolution.energy
                     if (exp(-delta / currentTemperature) > randomFloat) {
-                        useNew = true
+                        mustUseNewBoardSolution = true
                         acceptedByToleranceTimes++
                     }
                 }
 
-                if (useNew) {
+                if (mustUseNewBoardSolution) {
                     currentBoardSolution = newBoardSolution.clone()
                     if (currentBoardSolution.energy < bestBoardSolution.energy) {
                         println("Moving best solution, new energy: ${currentBoardSolution.energy}")
                         bestBoardSolution = currentBoardSolution.clone()
                         bestTemperature = currentTemperature
-                        solutionFound = true
+                        anySolutionFound = true
                     }
                 } else {
                     newBoardSolution = currentBoardSolution.clone()
@@ -71,11 +70,13 @@ class BrianLuke {
             }
             currentTemperature *= ALPHA
         }
-        if (solutionFound) {
+        if (anySolutionFound) {
             bestBoardSolution.printPrettySolution(
                 temperature = bestTemperature,
                 acceptedCount = acceptedByToleranceTimes
             )
+        } else {
+            println("Warn: no any solution found for board with size: $boardLength") // unreachable code =)
         }
     }
 

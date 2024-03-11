@@ -3,6 +3,15 @@ package com.vito.sanel
 import com.vito.sanel.models.Board
 import kotlin.random.Random
 
+fun Board.initSolution() {
+    initDiagonalSolution()
+    repeat(solutionSize) { tweakSolution() }
+}
+
+fun Board.initDiagonalSolution() {
+    (0 until solutionSize).forEach { solution[it] = it }
+}
+
 fun Board.tweakSolution() {
     val x = Random.nextInt(0, solutionSize)
     var y = Random.nextInt(0, solutionSize)
@@ -12,39 +21,42 @@ fun Board.tweakSolution() {
     solution[x] = solution[y].also { solution[y] = solution[x] }
 }
 
-fun Board.initDiagonalSolution() {
-    (0 until solutionSize).forEach { solution[it] = it }
-}
-
-fun Board.initSolution() {
-    initDiagonalSolution()
-    repeat(solutionSize) { tweakSolution() }
-}
-
 fun Board.computeAndSetEnergy() {
     this.energy = computeEnergy()
 }
 
 fun Board.computeEnergy() = (0 until solutionSize).sumOf { x ->
-    (0..3).sumOf { dIdx -> // NW then SE etc
-        computeConflictsOnDiagonal(x, dIdx)
+    (0..3).sumOf { dIdx -> // Check only four ways as diagonals: NW then SE etc
+        computeConflictsOnDiagonal(
+            board = this,
+            x,
+            diagonalIndex = dIdx
+        )
     }
 }.toFloat()
 
-val dx = intArrayOf(-1, 1, -1, 1)
-val dy = intArrayOf(-1, 1, 1, -1)
-private fun Board.computeConflictsOnDiagonal(x: Int, dIdx: Int): Int {
+private val diagonalX = intArrayOf(-1, 1, -1, 1)
+private val diagonalY = intArrayOf(-1, 1, 1, -1)
+private fun computeConflictsOnDiagonal(board: Board, x: Int, diagonalIndex: Int): Int {
     var conflictCount = 0
     var posX = x
-    var posY = solution[x]
+    var posY = board.solution[x]
     while (true) {
-        posX += dx[dIdx] // move by abscissa
-        posY += dy[dIdx] // move by ordinatus
-        val borderLimitReached = (posX < 0) || (posX >= solutionSize) || (posY < 0) || (posY >= solutionSize)
+        posX += diagonalX[diagonalIndex] // move by abscissa
+        posY += diagonalY[diagonalIndex] // move by ordinatus
+        val borderLimitReached = (posX < 0) || (posX >= board.solutionSize)
+                || (posY < 0) || (posY >= board.solutionSize)
         if (borderLimitReached) return conflictCount
-        if (cellContainQueen(posX, posY)) conflictCount++
+        if (board.cellContainQueen(posX, posY)) conflictCount++
     }
 }
+
+private fun Board.getBoard() = // get matrix represent boolean type
+    Array(solutionSize) { BooleanArray(solutionSize) }.also { bd ->
+        (0 until solutionSize).forEach {
+            bd[it][this.solution[it]] = true
+        }
+    }
 
 fun Board.stringView() = getBoard().run {
     this.indices.joinToString("") { this[it].contentToString() + "\n" }
@@ -60,10 +72,3 @@ fun Board.printPrettySolution(
     stringView().replace("true", "Q").replace("false", "x")
     )
 }
-
-private fun Board.getBoard() =
-    Array(solutionSize) { BooleanArray(solutionSize) }.also { bd ->
-        (0 until solutionSize).forEach {
-            bd[it][this.solution[it]] = true
-        }
-    }
