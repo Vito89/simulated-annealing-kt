@@ -8,6 +8,7 @@ import kotlinx.coroutines.withContext
 import kotlin.math.exp
 import kotlin.random.Random
 
+const val DEFAULT_MAX_BOARD_LENGTH = 50
 const val INITIAL_TEMPERATURE = 0.4
 const val FINAL_TEMPERATURE = 0.27
 const val ALPHA = 0.98
@@ -25,14 +26,15 @@ const val THREAD_COUNT = 5
 
 class BrianLuke {
 
-    suspend fun generateBoardAndPrint() {
+    suspend fun generateBoardAndPrint(boardLength: Int = DEFAULT_MAX_BOARD_LENGTH) {
         var solutionFound = false
-        var currentBoardSolution = Board().also {
-            it.initSolution()
-            it.computeAndSetEnergy()
+        var currentBoardSolution = Board(solution = IntArray(boardLength), energy = DEFAULT_ENERGY)
+            .also {
+                it.initSolution()
+                it.computeAndSetEnergy()
         }
         var newBoardSolution = currentBoardSolution.clone()
-        var bestBoardSolution = Board(solution = intArrayOf(), energy = DEFAULT_ENERGY)
+        var bestBoardSolution = Board(solution = intArrayOf(boardLength), energy = DEFAULT_ENERGY)
         var bestTemperature = -1.0
         var acceptedByToleranceTimes = 0
         var currentTemperature = INITIAL_TEMPERATURE
@@ -58,7 +60,7 @@ class BrianLuke {
                 if (useNew) {
                     currentBoardSolution = newBoardSolution.clone()
                     if (currentBoardSolution.energy < bestBoardSolution.energy) {
-                        println("Moving best solution with new energy: ${currentBoardSolution.energy}")
+                        println("Moving best solution, new energy: ${currentBoardSolution.energy}")
                         bestBoardSolution = currentBoardSolution.clone()
                         bestTemperature = currentTemperature
                         solutionFound = true
@@ -70,7 +72,10 @@ class BrianLuke {
             currentTemperature *= ALPHA
         }
         if (solutionFound) {
-            bestBoardSolution.printPrettySolution(bestTemperature, acceptedByToleranceTimes)
+            bestBoardSolution.printPrettySolution(
+                temperature = bestTemperature,
+                acceptedCount = acceptedByToleranceTimes
+            )
         }
     }
 
@@ -90,8 +95,10 @@ class BrianLuke {
             val minOldEnergy = workSolutions.minOf { it.energy }
             val minEnergy = tweakedBoards.minOf { it.energy }
             if (minOldEnergy != minEnergy) {
-                println("Error handled: minOldEnergy $minOldEnergy differentThan minEnergy $minEnergy")
-                throw IllegalStateException("Error handled: minOldEnergy $minOldEnergy differentThan minEnergy $minEnergy")
+                with ("Error handled: minOldEnergy $minOldEnergy differentThan minEnergy $minEnergy") {
+                    println(this)
+                    throw IllegalStateException(this)
+                }
             }
             return@withContext tweakedBoards.first { it.energy == minEnergy }
         }

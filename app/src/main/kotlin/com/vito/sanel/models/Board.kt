@@ -1,9 +1,7 @@
 package com.vito.sanel.models
 
-const val DEFAULT_MAX_BOARD_LENGTH = 50
-
 data class Board(
-    val solution: IntArray = IntArray(DEFAULT_MAX_BOARD_LENGTH),
+    val solution: IntArray,
     var energy: Float = -1F,
 ) {
 

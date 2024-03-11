@@ -50,13 +50,14 @@ fun Board.stringView() = getBoard().run {
     this.indices.joinToString("") { this[it].contentToString() + "\n" }
 }
 
-fun Board.printPrettySolution(temperature: Double, acceptedCount: Int) {
-    println(
-        "\nThe Board with solution energy $energy, temperature $temperature, acceptedByTolerance $acceptedCount:\n${
-            stringView()
-                .replace("true", "Q")
-                .replace("false", "x")
-        }",
+fun Board.printPrettySolution(
+    temperature: Double,
+    acceptedCount: Int
+) {
+    val prefix = if (energy == 0F) { "have just" } else { "not" }
+    println("The solution $prefix found!\n" +
+            "The Board with solution energy $energy, temperature $temperature, acceptedByTolerance $acceptedCount:\n" +
+    stringView().replace("true", "Q").replace("false", "x")
     )
 }
 
