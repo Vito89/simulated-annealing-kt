@@ -30,7 +30,7 @@ fun Board.computeEnergy() = (0 until solutionSize).sumOf { x ->
         computeConflictsOnDiagonal(
             board = this,
             x,
-            diagonalIndex = dIdx
+            diagonalIndex = dIdx,
         )
     }
 }.toFloat()
@@ -44,8 +44,8 @@ private fun computeConflictsOnDiagonal(board: Board, x: Int, diagonalIndex: Int)
     while (true) {
         posX += diagonalX[diagonalIndex] // move by abscissa
         posY += diagonalY[diagonalIndex] // move by ordinatus
-        val borderLimitReached = (posX < 0) || (posX >= board.solutionSize)
-                || (posY < 0) || (posY >= board.solutionSize)
+        val borderLimitReached = (posX < 0) || (posX >= board.solutionSize) ||
+            (posY < 0) || (posY >= board.solutionSize)
         if (borderLimitReached) return conflictCount
         if (board.cellContainQueen(posX, posY)) conflictCount++
     }
@@ -64,11 +64,12 @@ fun Board.stringView() = getBoard().run {
 
 fun Board.printPrettySolution(
     temperature: Double,
-    acceptedCount: Int
+    acceptedCount: Int,
 ) {
     val prefix = if (energy == 0F) { "have just" } else { "not" }
-    println("The solution $prefix found!\n" +
+    println(
+        "The solution $prefix found!\n" +
             "The Board with solution energy $energy, temperature $temperature, acceptedByTolerance $acceptedCount:\n" +
-    stringView().replace("true", "Q").replace("false", "x")
+            stringView().replace("true", "Q").replace("false", "x"),
     )
 }

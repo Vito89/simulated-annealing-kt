@@ -73,7 +73,7 @@ class BrianLuke {
         if (anySolutionFound) {
             bestBoardSolution.printPrettySolution(
                 temperature = bestTemperature,
-                acceptedCount = acceptedByToleranceTimes
+                acceptedCount = acceptedByToleranceTimes,
             )
         } else {
             println("Warn: no any solution found for board with size: $boardLength") // unreachable code =)
@@ -96,7 +96,7 @@ class BrianLuke {
             val minOldEnergy = workSolutions.minOf { it.energy }
             val minEnergy = tweakedBoards.minOf { it.energy }
             if (minOldEnergy != minEnergy) {
-                with ("Error handled: minOldEnergy $minOldEnergy differentThan minEnergy $minEnergy") {
+                with("Error handled: minOldEnergy $minOldEnergy differentThan minEnergy $minEnergy") {
                     println(this)
                     throw IllegalStateException(this)
                 }
