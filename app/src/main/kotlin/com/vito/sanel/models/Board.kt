@@ -1,10 +1,8 @@
 package com.vito.sanel.models
 
-const val DEFAULT_MAX_BOARD_LENGTH = 50
-
 data class Board(
-    val solution: IntArray = IntArray(DEFAULT_MAX_BOARD_LENGTH),
-    var energy: Float = -1F
+    val solution: IntArray,
+    var energy: Float = -1F,
 ) {
 
     val solutionSize get() = solution.size
@@ -18,14 +16,14 @@ data class Board(
         if (other !is Board) return false
 
         if (!solution.contentEquals(other.solution)) return false
-        if (energy != other.energy) return false
 
-        return true
+        return energy == other.energy
     }
 
     override fun hashCode(): Int {
         var result = solution.contentHashCode()
         result = 31 * result + energy.hashCode()
+
         return result
     }
 }

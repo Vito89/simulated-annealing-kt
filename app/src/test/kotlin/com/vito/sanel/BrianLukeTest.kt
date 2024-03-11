@@ -11,7 +11,7 @@ class BrianLukeTest {
 
     @Test
     fun `should be different after one tweakSolution call`() {
-        Board().run {
+        Board(solution = IntArray(DEFAULT_MAX_BOARD_LENGTH)).run {
             this.initDiagonalSolution()
             val initStateSolution = this.solution.copyOf()
             this.tweakSolution()
@@ -22,7 +22,7 @@ class BrianLukeTest {
 
     @Test
     fun `should be different after few tweakSolution call (low possible false test)`() {
-        Board().run {
+        Board(solution = IntArray(DEFAULT_MAX_BOARD_LENGTH)).run {
             this.initDiagonalSolution()
             val initStateSolution = this.solution.copyOf()
             (0..5).forEach { _ -> this.tweakSolution() }
