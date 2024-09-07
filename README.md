@@ -1,65 +1,102 @@
-# Simulated Annealing Brian Luke implementation
+Вступление к статье на Medium
+https://algorithmica.org/ru/annealing
+https://www.perplexity.ai/search/medium-hV03HzPpTPK52fs1_B37hg
 
-Title: Exploring Optimization: The Simulated Annealing Algorithm by Brian Luke
+# Simulated Annealing Brian Luke implementation // Металл, тонкости отжига и ИИ
 
-In the realm of optimization algorithms, Simulated Annealing stands out as a powerful technique
-inspired by the physical process of annealing in metallurgy.
-Developed by Brian Luke in the late 1980s,
-this algorithm has found widespread applications in diverse fields
-ranging from engineering and computer science to finance and biology.
-Its ability to efficiently navigate complex search spaces
-and find near-optimal solutions has made it indispensable in solving many real-world problems.
+### Вступление // Header Main
+**Тема искусственного интеллекта** стремительно набирает популярность,
+но реализация алгоритмов используемых в ИИ часто бывает сложной и запутанной.
+В этой статье я расскажу, как переписал реализацию алгоритма на примере 
+исследования Брайна Люка "Отжиг" сократив код вдвое с помощью современных практик и технологий.
 
-### Understanding Simulated Annealing
+### Понимание Алгоритма Отжига // Header Secondary: Understanding Simulated Annealing
+В области алгоритмов оптимизации выделяется **Алгоритма Отжига** (Симулированный Анализ) - мощная техника, вдохновленная физическим процессом
+в металлургии, позволяющая уменьшенить дефекты и улучшенить кристаллическую структуру материалов.
+Идея заключается в начале с высокой температуры, с постепенным охлаждением, достигая состояния минимальной энергии.
+Разработанный Брайаном Луком в конце 1980-х, этот алгоритм нашел широкое применение в различных областях
+(от инженерии и информатики до финансов и биологии, благодаря способности эффективно искать оптимальные решения в сложных пространствах.)
 
-Simulated Annealing draws its inspiration from the annealing process used in metallurgy 
-to reduce defects and improve the crystalline structure of materials.
-The core idea is to start with a high-temperature system, allowing for a high degree of randomness,
-and gradually cool it down, reducing the randomness and reaching a state of minimal energy.
+### Реализация // Body First: Algorithmic Workflow
+Рассмотрим алгоритм "Отжиг" из исследования Брайна Люка:
+Реализация являет поиск глобального минимума функции энергии.
+Принимая начальное состояние, максимальное количество итераций, начальную и конечную температуру.
+На каждой итерации алгоритм генерирует новое состояние, вычисляет разницу энергии между новым и текущим
+состояниями и принимает новое состояние с определенной вероятностью, зависящей от температуры.
 
-In the context of optimization, this randomness translates into exploring a wide range 
-of potential solutions, even those that might initially seem suboptimal.
-As the algorithm progresses, it becomes increasingly selective, converging towards the optimal solution.
+### Ключевые преимущества // Body Second: Key Advantages
+Имитация отжига предлагает несколько преимуществ по сравнению с другими методами оптимизации:
+- **Глобальное исследование**: В отличие от жадных алгоритмов, метод исследует
+  все пространство решений, что снижает вероятность застревания в локальном оптимуме.
+- **Стохастическая природа**: Вероятностное принятие худших решений позволяет
+  избежать локальных оптимумов, что приведет к потенциально лучшим решениям.
 
-### Algorithmic Workflow
+### Примеры применения // Body Third: Applications
+Имитация отжига успешно применяется для решения множества задач на проктике, вот пример:
+- **Задача коммивояжера**: найти кратчайший маршрут, который посещает набор
+  городов ровно один раз
+- **Проектирование схемы СБИС**: размещение и разводка компонентов на кристалле
+  для оптимизации производительности и минимизации занимаемой площади
+- **Сворачивание белков**: определение трехмерной структуры белков,
+  что имеет решающее значение для понимания их функций и разработки лекарств
 
-The workflow of Simulated Annealing can be summarized in several key steps:
+### Завершение // Tail First
+Подход упростил код, путем внедрения структурности и модульности, обрел переносимость и расширяемость.
+(Симулированный Анализ, разработанный Брайаном Луком, является мощной техникой оптимизации
+с широким спектром применения. Он остается важным инструментом
+для исследователей и практиков в решении оптимизационных задач.)
 
-1. **Initialization**: Begin with an initial solution and set the initial temperature and cooling rate.
+----------------------------------------------------------------------------------------------
 
-2. **Iterative Improvement**: Iteratively perturb the current solution to generate neighboring solutions. 
-   These perturbations could be random changes or guided mutations based on problem-specific heuristics.
+# Mash
 
-3. **Acceptance Criterion**: Evaluate each neighboring solution and decide whether to accept it. 
-   Unlike deterministic methods like gradient descent, Simulated Annealing accepts worse solutions 
-   probabilistically, allowing it to escape local optima.
+# Tail Temp
+Симулированный Анализ, разработанный Брайаном Луком, является мощной техникой оптимизации
+с широким спектром применения. Он остается важным инструментом
+для исследователей и практиков в решении оптимизационных задач.
 
-4. **Cooling Schedule**: Gradually decrease the temperature according to a predefined cooling schedule.
-   Lower temperatures correspond to less randomness and greater exploitation of the search space.
+**Основы Симулированного Анализа**
+Анализ черпает вдохновение из процесса анализа в металлургии для улучшения структуры материалов.
+Идея заключается в начале с высокотемпературной системы,
+с постепенным охлаждением переходя к минимальной энергии.
 
-5. **Termination**: Stop the algorithm when a termination condition is met, 
-   such as reaching a certain temperature or after a fixed number of iterations.
+**Алгоритмический Процесс**
+Инициализация: Начало с начального решения, установка температуры и скорости охлаждения.
+Итеративное Улучшение: Перебор текущего решения для генерации соседних решений.
+Критерий Принятия: Оценка соседних решений и их принятие.
+Расписание Охлаждения: Постепенное снижение температуры.
+Завершение: Остановка алгоритма при выполнении условия завершения.
 
-### Key Advantages
-Simulated Annealing offers several advantages over other optimization techniques:
-- **Global Exploration**: Unlike greedy algorithms, Simulated Annealing explores the entire solution space,
-  making it less likely to get stuck in local optima.
-- **Flexibility**: The algorithm is versatile and can be applied to a wide range of optimization
-  problems without requiring significant problem-specific tuning.
-- **Stochastic Nature**: The probabilistic acceptance of worse solutions enables Simulated Annealing
-  to escape local optima, leading to potentially better solutions.
+## Исходный код алгоритма "Отжиг"
+```python
+import random
+import math
 
-### Applications
-Simulated Annealing has been successfully applied to numerous real-world problems:
-- **Traveling Salesman Problem**: Finding the shortest route that visits a set of cities exactly once.
-- **Job Scheduling**: Optimizing the allocation of resources to tasks to minimize completion time.
-- **VLSI Circuit Design**: Placement and routing of components on a chip to optimize performance and minimize area.
-- **Protein Folding**: Determining the three-dimensional structure of proteins, crucial for understanding their function and designing drugs.
+class AnnealingProblem:
+    def __init__(self, start_state, energy_func, neighbor_func):
+        self.start_state = start_state
+        self.energy_func = energy_func
+        self.neighbor_func = neighbor_func
 
-### Conclusion
-Simulated Annealing, pioneered by Brian Luke, has emerged as a powerful optimization
-technique with broad applications across various domains.
-Its ability to efficiently explore complex search spaces
-and find near-optimal solutions has made it a staple in the toolkit of researchers and practitioners alike.
-As technology continues to advance,
-Simulated Annealing remains a vital tool for tackling the optimization challenges of today and tomorrow.
+    def anneal(self, max_iter, temp_start, temp_end):
+        temp = temp_start
+        state = self.start_state
+        best_state = self.start_state
+        best_energy = self.energy_func(self.start_state)
+
+        for i in range(max_iter):
+            new_state = self.neighbor_func(state)
+            new_energy = self.energy_func(new_state)
+            delta_energy = new_energy - self.energy_func(state)
+
+            if delta_energy < 0 or random.uniform(0, 1) < math.exp(-delta_energy / temp):
+                state = new_state
+
+            if self.energy_func(state) < best_energy:
+                best_state = state
+                best_energy = self.energy_func(state)
+
+            temp *= 0.99
+
+        return best_state, best_energy
+```
