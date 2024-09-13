@@ -37,7 +37,7 @@ class BrianLuke {
 
             repeat(STEPS_PER_CHANGE) {
                 var mustUseNewBoardSolution = false
-                newBoardSolution = forkAndWork(workSolution = newBoardSolution)
+                newBoardSolution = tweakWork(workSolution = newBoardSolution)
 
                 if (newBoardSolution.energy <= currentBoardSolution.energy) {
                     mustUseNewBoardSolution = true
@@ -74,9 +74,9 @@ class BrianLuke {
         }
     }
 
-    private suspend fun forkAndWork(workSolution: Board): Board =
+    private suspend fun tweakWork(workSolution: Board): Board =
         if (PARALLEL_MODE_IS_ON) {
-            doWork(List(THREAD_COUNT) { workSolution.clone() })
+            doTweakWork(List(THREAD_COUNT) { workSolution.clone() })
         } else {
             workSolution.apply {
                 tweakSolution()
@@ -84,29 +84,23 @@ class BrianLuke {
             }
         }
 
-    private suspend fun doWork(workSolutions: Collection<Board>): Board = withContext(Dispatchers.Default) {
+    private suspend fun doTweakWork(workSolutions: Collection<Board>): Board = withContext(Dispatchers.Default) {
         val tweakedBoards = workSolutions.map { async { return@async tryTweakAndCompute(it) } }.awaitAll()
-        val minOldEnergy = workSolutions.minOf { it.energy }
         val minEnergy = tweakedBoards.minOf { it.energy }
-        if (minOldEnergy != minEnergy) {
-            with("Error handled: minOldEnergy $minOldEnergy differentThan minEnergy $minEnergy") {
-                println(this)
-                throw IllegalStateException(this)
-            }
-        }
+
         return@withContext tweakedBoards.first { it.energy == minEnergy }
     }
 
     private suspend fun tryTweakAndCompute(board: Board): Board =
         try {
-            withContext(Dispatchers.Default) {
+            withContext(Dispatchers.Default) { // TODO SA-T possible to remove (duplicate withContext)
                 board.apply {
                     tweakSolution()
                     computeAndSetEnergy()
                 }
             }
         } catch (e: Exception) {
-            println("Error handled: ${e.message}")
-            throw IllegalStateException("Error handled: ${e.message}")
+            println("TryTweakAndCompute error handled: ${e.message}")
+            throw IllegalStateException("TryTweakAndCompute error handled: ${e.message}")
         }
 }
