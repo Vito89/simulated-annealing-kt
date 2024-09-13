@@ -35,15 +35,18 @@ class BrianLuke {
 
     suspend fun generateBoardAndPrintSolution(boardLength: Int = DEFAULT_MAX_BOARD_LENGTH) {
         var anySolutionFound = false
-        var currentBoardSolution = Board(solution = IntArray(boardLength), energy = DEFAULT_ENERGY)
-        currentBoardSolution.initSolution()
-        currentBoardSolution.computeAndSetEnergy()
+        var currentBoardSolution = Board(solution = IntArray(boardLength), energy = DEFAULT_ENERGY).apply{
+            initSolution()
+            computeAndSetEnergy()
+        }
 
         var newBoardSolution = currentBoardSolution.clone()
         var bestBoardSolution = Board(solution = intArrayOf(boardLength), energy = DEFAULT_ENERGY)
         var bestTemperature = -1.0
-        var acceptedByToleranceTimes = 0
         var currentTemperature = INITIAL_TEMPERATURE
+
+        // this parameter doesn't depend on algorithm but interested in statistics and will be printed to log
+        var acceptedByToleranceTimes = 0
 
         while ((currentTemperature > FINAL_TEMPERATURE) && (bestBoardSolution.energy != 0F)) {
             println("Current temperature is: $currentTemperature")
