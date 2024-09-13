@@ -15,14 +15,14 @@ private const val MAX_DIAGONAL_COUNT = 3
  * functions
  *
  * 2 - Compute Energy block
- * 2.1) computeEnergy -
- * 2.2) computeConflictsOnDiagonal -
- * 2.3) computeAndSetEnergy -
+ * 2.1) computeConflictsOnDiagonal - calculate conflicts only at four diagonals, no need to check vertical & horizontal
+ * 2.2) computeEnergy - calculate using computeConflictsOnDiagonal: check only four ways NW then SE etc.
+ * 2.3) computeAndSetEnergy - Set computed energy
  *
  * 3 - Print Solution block
- * 3.1) getBoardAsMatrix -
- * 3.2) stringMatrixView -
- * 3.3) printPrettySolution -
+ * 3.1) getBoardMatrixView - create matrix based on current board as array
+ * 3.2) stringMatrixView - make pretty view using separate by rows
+ * 3.3) printPrettySolution - print final pretty view via change "true" values to "Q" symbol, x else
  */
 
 fun Board.initSolution() {
@@ -83,11 +83,11 @@ fun Board.printPrettySolution(
     )
 }
 
-fun Board.stringMatrixView() = getBoardAsMatrix(this).run {
+fun Board.stringMatrixView() = getBoardMatrixView(this).run {
     this.indices.joinToString("") { this[it].contentToString() + "\n" }
 }
 
-private fun getBoardAsMatrix(board: Board): Array<BooleanArray> =
+private fun getBoardMatrixView(board: Board): Array<BooleanArray> =
     Array(board.solutionSize) { BooleanArray(board.solutionSize) }.also { bd ->
         (0 until board.solutionSize).forEach {
             bd[it][board.solution[it]] = true
