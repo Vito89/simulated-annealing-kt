@@ -15,14 +15,17 @@ private const val MAX_DIAGONAL_COUNT = 3
  * functions
  *
  * 2 - Compute Energy block
- * 2.1) computeConflictsOnDiagonal - calculate conflicts only at four diagonals, no need to check vertical & horizontal
- * 2.2) computeEnergy - calculate using computeConflictsOnDiagonal: check only four ways NW then SE etc.
- * 2.3) computeAndSetEnergy - Set computed energy
+ * 2.1) cellContainQueen - check and return true if current board contains queen
+ * * params: @x abscissa, @y ordinary
+ * 2.2) computeConflictsOnDiagonal - calculate conflicts only at four diagonals, no need to check vertical & horizontal
+ * 2.3) computeEnergy - calculate using computeConflictsOnDiagonal: check only four ways NW then SE etc.
+ * 2.4) computeAndSetEnergy - Set computed energy
  *
  * 3 - Print Solution block
  * 3.1) getBoardMatrixView - create matrix based on current board as array
  * 3.2) stringMatrixView - make pretty view using separate by rows
  * 3.3) printPrettySolution - print final pretty view via change "true" values to "Q" symbol, x else
+ * * params: @action temperature, acceptedCount
  */
 
 fun Board.initSolution() {
@@ -67,9 +70,12 @@ private fun computeConflictsOnDiagonal(board: Board, x: Int, diagonalIndex: Int)
         val borderLimitReached = (posX < 0) || (posX >= board.solutionSize) ||
             (posY < 0) || (posY >= board.solutionSize)
         if (borderLimitReached) return conflictCount
-        if (board.cellContainQueen(posX, posY)) conflictCount++
+        if (cellContainQueen(board, posX, posY)) conflictCount++
     }
 }
+
+// Check and return true if current board contains queen at indexes x, y
+private fun cellContainQueen(board: Board, x: Int, y: Int): Boolean = board.solution[x] == y
 
 fun Board.printPrettySolution(
     temperature: Double,
