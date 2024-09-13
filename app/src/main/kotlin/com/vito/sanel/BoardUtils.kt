@@ -16,7 +16,7 @@ private const val MAX_DIAGONAL_COUNT = 3
  *
  * 2 - Compute Energy block
  * 2.1) cellContainQueen - check and return true if current board contains queen
- * * params: @x abscissa, @y ordinary
+ * params: @x abscissa, @y ordinary
  * 2.2) computeConflictsOnDiagonal - calculate conflicts only at four diagonals, no need to check vertical & horizontal
  * 2.3) computeEnergy - calculate using computeConflictsOnDiagonal: check only four ways NW then SE etc.
  * 2.4) computeAndSetEnergy - Set computed energy
@@ -25,7 +25,7 @@ private const val MAX_DIAGONAL_COUNT = 3
  * 3.1) getBoardMatrixView - create matrix based on current board as array
  * 3.2) stringMatrixView - make pretty view using separate by rows
  * 3.3) printPrettySolution - print final pretty view via change "true" values to "Q" symbol, x else
- * * params: @action temperature, acceptedCount
+ * params: @action temperature, acceptedCount
  */
 
 fun Board.initSolution() {

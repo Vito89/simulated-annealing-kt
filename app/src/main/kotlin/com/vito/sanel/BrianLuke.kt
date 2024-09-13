@@ -18,9 +18,22 @@ const val DEFAULT_ENERGY = 100F
 const val PARALLEL_MODE_IS_ON = false
 const val THREAD_COUNT = 5
 
+/**
+ * generateBoardAndPrintSolution - calculate and print solution according input argument, the common logic of Bryan
+ * Luke algorithm is here include external cycle, logic with delta depend on accepting new solution etc.
+ * params: @boardLength length of solution as board length
+ *
+ * tryTweakAndCompute - tweak current board solution & compute energy after to set it
+ *
+ * tweakWork - this wrapper router method. Depend on PARALLEL_MODE_IS_ON configuration the processing may work in
+ * parallel mode
+ *
+ * doTweakWork - concurrent modification for tryTweakAndCompute based on Kotlin Coroutines
+ */
+
 class BrianLuke {
 
-    suspend fun generateBoardAndPrint(boardLength: Int = DEFAULT_MAX_BOARD_LENGTH) {
+    suspend fun generateBoardAndPrintSolution(boardLength: Int = DEFAULT_MAX_BOARD_LENGTH) {
         var anySolutionFound = false
         var currentBoardSolution = Board(solution = IntArray(boardLength), energy = DEFAULT_ENERGY)
         currentBoardSolution.initSolution()
@@ -93,7 +106,7 @@ class BrianLuke {
 
     private suspend fun tryTweakAndCompute(board: Board): Board =
         try {
-            withContext(Dispatchers.Default) { // TODO SA-T possible to remove (duplicate withContext)
+            withContext(Dispatchers.Default) {
                 board.apply {
                     tweakSolution()
                     computeAndSetEnergy()
