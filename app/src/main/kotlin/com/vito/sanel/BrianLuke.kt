@@ -86,7 +86,7 @@ class BrianLuke {
                 acceptedCount = acceptedByToleranceTimes,
             )
         } else {
-            println("Warn: no any solution found for board with size: $boardLength") // unreachable code =)
+            println("Warn: no any solution has found for board size: $boardLength") // unreachable yet code =)
         }
     }
 
