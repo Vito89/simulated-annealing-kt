@@ -19,16 +19,15 @@ const val PARALLEL_MODE_IS_ON = false
 const val THREAD_COUNT = 5
 
 /**
- * generateBoardAndPrintSolution - calculate and print solution according input argument, the common logic of Bryan
- * Luke algorithm is here include external cycle, logic with delta depend on accepting new solution etc.
- * params: @boardLength length of solution as board length
+ * @method generateBoardAndPrintSolution - calculate and print solution according input, consists common logic of
+ * Bryan Luke algorithm include external cycle and some delta depend on accepting new solution etc.
+ * @param boardLength length of solution as board length
  *
- * tryTweakAndCompute - tweak current board solution & compute energy after to set it
+ * @method tryTweakAndCompute - tweak current board solution & compute energy after to set it
  *
- * tweakWork - this wrapper router method. Depend on PARALLEL_MODE_IS_ON configuration the processing may work in
- * parallel mode
+ * @method tweakWork - router method. Depend on PARALLEL_MODE_IS_ON conf processing may work in parallel mode
  *
- * doTweakWork - concurrent modification for tryTweakAndCompute based on Kotlin Coroutines
+ * @method doTweakWork - wrapper, concurrent modification based on Kotlin Coroutines witch use tryTweakAndCompute
  */
 
 class BrianLuke {
