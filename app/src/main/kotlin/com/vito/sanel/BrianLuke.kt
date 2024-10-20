@@ -34,7 +34,7 @@ class BrianLuke {
 
     suspend fun generateBoardAndPrintSolution(boardLength: Int = DEFAULT_MAX_BOARD_LENGTH) {
         var anySolutionFound = false
-        var currentBoardSolution = Board(solution = IntArray(boardLength), energy = DEFAULT_ENERGY).apply{
+        var currentBoardSolution = Board(solution = IntArray(boardLength), energy = DEFAULT_ENERGY).apply {
             initSolution()
             computeAndSetEnergy()
         }

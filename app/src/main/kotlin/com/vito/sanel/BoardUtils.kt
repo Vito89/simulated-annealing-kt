@@ -34,7 +34,7 @@ fun Board.initSolution() {
 }
 
 fun Board.initDiagonalSolution() {
-    (0 until solutionSize).forEach {idx -> solution[idx] = idx }
+    (0 until solutionSize).forEach { idx -> solution[idx] = idx }
 }
 
 fun Board.tweakSolution() {
