@@ -7,7 +7,7 @@ import kotlin.system.measureTimeMillis
 fun main() {
     measureTimeMillis {
         runBlocking {
-            BrianLuke().generateBoardAndPrint()
+            BrianLuke().generateBoardAndPrintSolution()
         }
     }.also {
         println("Time measure for generateBoardAndPrint is: ${TimeUnit.MILLISECONDS.toMillis(it)} milliseconds")

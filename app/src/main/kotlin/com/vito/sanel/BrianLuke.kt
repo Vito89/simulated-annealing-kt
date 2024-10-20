@@ -18,19 +18,34 @@ const val DEFAULT_ENERGY = 100F
 const val PARALLEL_MODE_IS_ON = false
 const val THREAD_COUNT = 5
 
+/**
+ * @method generateBoardAndPrintSolution - calculate and print solution according input, consists common logic of
+ * Bryan Luke algorithm include external cycle and some delta depend on accepting new solution etc.
+ * @param boardLength length of solution as board length
+ *
+ * @method tryTweakAndCompute - tweak current board solution & compute energy after to set it
+ *
+ * @method tweakWork - router method. Depend on PARALLEL_MODE_IS_ON conf processing may work in parallel mode
+ *
+ * @method doTweakWork - wrapper, concurrent modification based on Kotlin Coroutines witch use tryTweakAndCompute
+ */
+
 class BrianLuke {
 
-    suspend fun generateBoardAndPrint(boardLength: Int = DEFAULT_MAX_BOARD_LENGTH) {
+    suspend fun generateBoardAndPrintSolution(boardLength: Int = DEFAULT_MAX_BOARD_LENGTH) {
         var anySolutionFound = false
-        var currentBoardSolution = Board(solution = IntArray(boardLength), energy = DEFAULT_ENERGY)
-        currentBoardSolution.initSolution()
-        currentBoardSolution.computeAndSetEnergy()
+        var currentBoardSolution = Board(solution = IntArray(boardLength), energy = DEFAULT_ENERGY).apply {
+            initSolution()
+            computeAndSetEnergy()
+        }
 
         var newBoardSolution = currentBoardSolution.clone()
         var bestBoardSolution = Board(solution = intArrayOf(boardLength), energy = DEFAULT_ENERGY)
         var bestTemperature = -1.0
-        var acceptedByToleranceTimes = 0
         var currentTemperature = INITIAL_TEMPERATURE
+
+        // this parameter doesn't depend on algorithm but interested in statistics and will be printed to log
+        var acceptedByToleranceTimes = 0
 
         while ((currentTemperature > FINAL_TEMPERATURE) && (bestBoardSolution.energy != 0F)) {
             println("Current temperature is: $currentTemperature")
@@ -70,7 +85,7 @@ class BrianLuke {
                 acceptedCount = acceptedByToleranceTimes,
             )
         } else {
-            println("Warn: no any solution found for board with size: $boardLength") // unreachable code =)
+            println("Warn: no any solution has found for board size: $boardLength") // unreachable yet code =)
         }
     }
 
@@ -93,7 +108,7 @@ class BrianLuke {
 
     private suspend fun tryTweakAndCompute(board: Board): Board =
         try {
-            withContext(Dispatchers.Default) { // TODO SA-T possible to remove (duplicate withContext)
+            withContext(Dispatchers.Default) {
                 board.apply {
                     tweakSolution()
                     computeAndSetEnergy()
