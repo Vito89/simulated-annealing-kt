@@ -21,7 +21,7 @@ class BrianLuke {
         var anySolutionFound = false
         var currentQueenBoardSolution = QueenBoard.randomInit(size = boardSize)
 
-        var newBoardSolution = currentQueenBoardSolution.clone()
+        var newBoardSolution = QueenBoard(solutionXtoY = currentQueenBoardSolution.solutionXtoY.copyOf())
         var bestQueenBoardSolution = QueenBoard.randomInit(size = boardSize)
         var bestTemperature = -1.0
         var currentTemperature = INITIAL_TEMPERATURE
@@ -48,15 +48,15 @@ class BrianLuke {
                 }
 
                 if (mustUseNewBoardSolution) {
-                    currentQueenBoardSolution = newBoardSolution.clone()
+                    currentQueenBoardSolution = QueenBoard(solutionXtoY = newBoardSolution.solutionXtoY.copyOf())
                     if (currentQueenBoardSolution.energy < bestQueenBoardSolution.energy) {
                         println("Moving best, new energy: ${currentQueenBoardSolution.energy}, temperature is: $currentTemperature")
-                        bestQueenBoardSolution = currentQueenBoardSolution.clone()
+                        bestQueenBoardSolution = QueenBoard(solutionXtoY = currentQueenBoardSolution.solutionXtoY.copyOf())
                         bestTemperature = currentTemperature
                         anySolutionFound = true
                     }
                 } else {
-                    newBoardSolution = currentQueenBoardSolution.clone()
+                    newBoardSolution = QueenBoard(solutionXtoY = currentQueenBoardSolution.solutionXtoY.copyOf())
                 }
             }
             currentTemperature *= ALPHA
@@ -69,7 +69,7 @@ class BrianLuke {
         }
     }
 
-    fun generateBoardAndPrintSolutionNew(boardSize: Int = DEFAULT_MAX_BOARD_SIZE) {
+    fun generateBoardAndPrintSolutionN1(boardSize: Int = DEFAULT_MAX_BOARD_SIZE) {
         var current = QueenBoard.randomInit(size = boardSize)
         var best: QueenBoard? = null
 
@@ -95,12 +95,12 @@ class BrianLuke {
     }
 
     private val temperatures = sequence {
-        var t = 0.4 // initial temperature
-        while (t > 0.27) { // final temperature
+        var t = 0.7 // initial temperature
+        while (t > 0.02) { // final temperature
             repeat(400) { // steps per change
                 yield(t)
             }
-            t *= 0.98 // alpha coefficient
+            t *= 0.99 // alpha coefficient
         }
     }
 

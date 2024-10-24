@@ -23,9 +23,6 @@ data class QueenBoard(
         return QueenBoard(newSolutionXtoY)
     }
 
-    // TODO remove
-    fun clone() = QueenBoard(solutionXtoY = solutionXtoY.copyOf()) //, energy = energy)
-
     override fun toString() = buildString {
         appendLine("Current board conflictQueensOnDiagonals: $conflictQueensOnDiagonals")
 //        for (y in 0 until solutionSize) {
