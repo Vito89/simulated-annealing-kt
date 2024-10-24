@@ -3,8 +3,6 @@ package com.vito.sanel
 import com.vito.sanel.models.QueenBoard
 import kotlin.random.Random
 
-private const val MAX_DIAGONAL_COUNT = 3
-
 /**
  * Extensions for class Board consist three blocks:
  *
@@ -27,24 +25,6 @@ private const val MAX_DIAGONAL_COUNT = 3
  * 3.3) printPrettySolution - print final pretty view via change "true" values to "Q" symbol, x else
  * params: @action temperature, acceptedCount
  */
-
-fun QueenBoard.initSolution() {
-    initDiagonalSolution()
-    repeat(solutionSize) { tweakSolution() }
-}
-
-fun QueenBoard.initDiagonalSolution() {
-    (0 until solutionSize).forEach { idx -> solutionXtoY[idx] = idx }
-}
-
-fun QueenBoard.tweakSolution() {
-    val x = Random.nextInt(0, solutionSize)
-    var y = Random.nextInt(0, solutionSize)
-    while (x == y) {
-        y = Random.nextInt(0, solutionSize)
-    }
-    solutionXtoY[x] = solutionXtoY[y].also { solutionXtoY[y] = solutionXtoY[x] }
-}
 
 fun QueenBoard.computeAndSetEnergy() { this.energy = this.conflictQueensOnDiagonals }
 

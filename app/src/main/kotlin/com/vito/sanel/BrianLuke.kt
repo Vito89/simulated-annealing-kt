@@ -11,24 +11,16 @@ const val ALPHA = 0.98
 const val STEPS_PER_CHANGE = 400
 const val DEFAULT_ENERGY = 100
 
-/**
- * @method generateBoardAndPrintSolution - calculate and print solution according input, consists common logic of
- * Bryan Luke algorithm include external cycle and some delta depend on accepting new solution etc.
- * @param boardLength length of solution as board length
- *
- * @method tryTweakAndCompute - tweak current board solution & compute energy after to set it
- *
- * @method tweakWork - router method. Depend on PARALLEL_MODE_IS_ON conf processing may work in parallel mode
- *
- * @method doTweakWork - wrapper, concurrent modification based on Kotlin Coroutines witch use tryTweakAndCompute
- */
-
 class BrianLuke {
 
+    /**
+     * @method generateBoardAndPrintSolution - calculate and print solution according input, consists common logic of
+     * Bryan Luke algorithm include external cycle and some delta depend on accepting new solutionXtoY etc.
+     * @param boardSize length of solutionXtoY as QueenBoard length
+     */
     fun generateBoardAndPrintSolution(boardSize: Int = DEFAULT_MAX_BOARD_SIZE) {
         var anySolutionFound = false
         var currentQueenBoardSolution = QueenBoard(solutionXtoY = IntArray(boardSize), energy = DEFAULT_ENERGY).apply {
-            initSolution()
             computeAndSetEnergy()
         }
 
@@ -45,7 +37,10 @@ class BrianLuke {
 
             repeat(STEPS_PER_CHANGE) {
                 var mustUseNewBoardSolution = false
-                newBoardSolution = tweakWork(workSolution = newBoardSolution)
+                newBoardSolution = newBoardSolution.apply {
+                    randomSwapQueens()
+                    computeAndSetEnergy()
+                }
 
                 if (newBoardSolution.energy <= currentQueenBoardSolution.energy) {
                     mustUseNewBoardSolution = true
@@ -73,16 +68,10 @@ class BrianLuke {
             currentTemperature *= ALPHA
         }
         if (anySolutionFound) {
-            println("Info: bestTemperature: $bestTemperature, acceptedByToleranceCount: $acceptedByToleranceCount")
+            println("Founded solution has bestTemperature: $bestTemperature, acceptedByToleranceCount: $acceptedByToleranceCount")
             println(bestQueenBoardSolution)
         } else {
             println("Warn: no any solution has found for board size: $boardSize")
         }
     }
-
-    private fun tweakWork(workSolution: QueenBoard): QueenBoard =
-            workSolution.apply {
-                tweakSolution()
-                computeAndSetEnergy()
-            }
 }
