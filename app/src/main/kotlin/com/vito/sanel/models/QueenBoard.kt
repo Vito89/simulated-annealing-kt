@@ -4,7 +4,7 @@ import kotlin.random.Random
 
 data class QueenBoard(
     val solutionXtoY: IntArray,
-    var energy: Int = -1,
+//    private var energy: Int = -1,
 ) {
 
     val solutionSize get() = solutionXtoY.size
@@ -24,16 +24,8 @@ data class QueenBoard(
         return QueenBoard(newSolutionXtoY)
     }
 
-    fun QueenBoard.tweakSolution() {
-        val x = Random.nextInt(0, solutionSize)
-        var y = Random.nextInt(0, solutionSize)
-        while (x == y) {
-            y = Random.nextInt(0, solutionSize)
-        }
-        solutionXtoY[x] = solutionXtoY[y].also { solutionXtoY[y] = solutionXtoY[x] }
-    }
-
-    fun clone() = QueenBoard(solutionXtoY = solutionXtoY.copyOf(), energy = energy)
+    // TODO remove
+    fun clone() = QueenBoard(solutionXtoY = solutionXtoY.copyOf()) //, energy = energy)
 
     override fun toString() = buildString {
         for (y in 0 until solutionSize) {
@@ -51,17 +43,18 @@ data class QueenBoard(
 
     private fun computeConflictQueensOnDiagonals(x: Int): Int =
         computeConflictQueensOnDiagonal(x, xInc = -1, yInc = -1) +
-                computeConflictQueensOnDiagonal(x, xInc = 1, yInc = 1) +
-                computeConflictQueensOnDiagonal(x, xInc = -1, yInc = 1) +
-                computeConflictQueensOnDiagonal(x, xInc = 1, yInc = -1)
+            computeConflictQueensOnDiagonal(x, xInc = 1, yInc = 1) +
+            computeConflictQueensOnDiagonal(x, xInc = -1, yInc = 1) +
+            computeConflictQueensOnDiagonal(x, xInc = 1, yInc = -1)
 
     private fun computeConflictQueensOnDiagonal(x: Int, xInc: Int, yInc: Int): Int {
         var conflictCount = 0
         var posX = x + xInc
         var posY = solutionXtoY[x] + yInc
         while (posX in 0 until solutionSize && posY in 0 until solutionSize) {
-            if (isQueen(posX, posY))
+            if (isQueen(posX, posY)) {
                 conflictCount++
+            }
             posX += xInc
             posY += yInc
         }
