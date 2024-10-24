@@ -17,7 +17,7 @@ class BrianLuke {
      * Bryan Luke algorithm include external cycle and some delta depend on accepting new solutionXtoY etc.
      * @param boardSize length of solutionXtoY as QueenBoard length
      */
-    fun generateBoardAndPrintSolution(boardSize: Int = DEFAULT_MAX_BOARD_SIZE) {
+    fun generateBoardAndPrintSolutionOld(boardSize: Int = DEFAULT_MAX_BOARD_SIZE) {
         var anySolutionFound = false
         var currentQueenBoardSolution = QueenBoard.randomInit(size = boardSize)
 
@@ -50,7 +50,7 @@ class BrianLuke {
                 if (mustUseNewBoardSolution) {
                     currentQueenBoardSolution = newBoardSolution.clone()
                     if (currentQueenBoardSolution.energy < bestQueenBoardSolution.energy) {
-                        println("Moving best solution, new energy: ${currentQueenBoardSolution.energy}")
+                        println("Moving best, new energy: ${currentQueenBoardSolution.energy}, temperature is: $currentTemperature")
                         bestQueenBoardSolution = currentQueenBoardSolution.clone()
                         bestTemperature = currentTemperature
                         anySolutionFound = true
@@ -63,9 +63,44 @@ class BrianLuke {
         }
         if (anySolutionFound) {
             println("Founded solution has bestTemperature: $bestTemperature, acceptedByToleranceCount: $acceptedByToleranceCount")
-//            println(bestQueenBoardSolution)
+            println(bestQueenBoardSolution)
         } else {
             println("Warn: no any solution has found for board size: $boardSize")
+        }
+    }
+
+    fun generateBoardAndPrintSolution(boardSize: Int = DEFAULT_MAX_BOARD_SIZE) {
+        var current = QueenBoard.randomInit(size = boardSize)
+        var best: QueenBoard? = null
+
+        for (temperature in temperatures) {
+            val new = current.randomSwapQueens()
+
+            val shouldTolerateNewEnergy = exp((current.energy - new.energy) / temperature) > Random.nextFloat()
+
+            if (new.energy <= current.energy || shouldTolerateNewEnergy) {
+                current = new
+                if (current.energy < best.energy) {
+                    println("Moving best, new energy: ${new.energy}, temperature is: $temperature")
+                    best = current
+                    if (best.energy == 0) {
+                        println(best)
+                        return
+                    }
+                }
+            }
+        }
+
+        println("Warn: no any solution has found for board size: $boardSize")
+    }
+
+    private val temperatures = sequence {
+        var t = 0.4 // initial temperature
+        while (t > 0.27) { // final temperature
+            repeat(400) { // steps per change
+                yield(t)
+            }
+            t *= 0.98 // alpha coefficient
         }
     }
 
