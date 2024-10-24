@@ -1,5 +1,7 @@
 package com.vito.sanel.models
 
+import kotlin.random.Random
+
 data class QueenBoard(
     val solutionXtoY: IntArray,
     var energy: Int = -1,
@@ -8,6 +10,28 @@ data class QueenBoard(
     val solutionSize get() = solutionXtoY.size
 
     private fun isQueen(x: Int, y: Int) = solutionXtoY[x] == y
+
+    fun randomSwapQueens(count: Int = 1): QueenBoard {
+        val newSolutionXtoY = solutionXtoY.copyOf()
+        repeat(count) {
+            val x = Random.nextInt(solutionSize)
+            var y = Random.nextInt(solutionSize)
+            while (x == y) {
+                y = Random.nextInt(0, solutionSize)
+            }
+            newSolutionXtoY[x] = newSolutionXtoY[y].also { newSolutionXtoY[y] = newSolutionXtoY[x] }
+        }
+        return QueenBoard(newSolutionXtoY)
+    }
+
+    fun QueenBoard.tweakSolution() {
+        val x = Random.nextInt(0, solutionSize)
+        var y = Random.nextInt(0, solutionSize)
+        while (x == y) {
+            y = Random.nextInt(0, solutionSize)
+        }
+        solutionXtoY[x] = solutionXtoY[y].also { solutionXtoY[y] = solutionXtoY[x] }
+    }
 
     fun clone() = QueenBoard(solutionXtoY = solutionXtoY.copyOf(), energy = energy)
 
@@ -44,19 +68,9 @@ data class QueenBoard(
         return conflictCount
     }
 
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (other !is QueenBoard) return false
-
-        if (!solutionXtoY.contentEquals(other.solutionXtoY)) return false
-
-        return energy == other.energy
-    }
-
-    override fun hashCode(): Int {
-        var result = solutionXtoY.contentHashCode()
-        result = 31 * result + energy.hashCode()
-
-        return result
+    companion object {
+        fun randomInit(size: Int) =
+            QueenBoard(IntArray(size) { it })
+                .randomSwapQueens(count = size)
     }
 }

@@ -4,35 +4,35 @@ import com.vito.sanel.models.QueenBoard
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertNotEquals
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
 class BrianLukeTest {
 
     @Test
-    fun `should be different after one tweakSolution call`() {
-        QueenBoard(solutionXtoY = IntArray(DEFAULT_MAX_BOARD_SIZE)).run {
-            this.initDiagonalSolution()
-            val initStateSolution = this.solutionXtoY.copyOf()
-            this.tweakSolution()
-            assertEquals(initStateSolution.size, this.solutionXtoY.size)
-            assertFalse(initStateSolution.contentEquals(this.solutionXtoY))
+    fun `board solution should be different after one tweakSolution call`() {
+        QueenBoard.randomInit(size = DEFAULT_MAX_BOARD_SIZE).run {
+            val newStateSolution = this.randomSwapQueens()
+            assertEquals(this.solutionSize, newStateSolution.solutionSize)
+            assertFalse(this.solutionXtoY.contentEquals(newStateSolution.solutionXtoY))
         }
     }
 
     @Test
-    fun `should be different after few tweakSolution call`() {
-        QueenBoard(solutionXtoY = IntArray(DEFAULT_MAX_BOARD_SIZE)).run {
-            this.initDiagonalSolution()
-            val initStateSolution = this.solutionXtoY.copyOf()
-            (0..5).forEach { _ -> this.tweakSolution() }
-            assertEquals(initStateSolution.size, this.solutionXtoY.size)
-            assertFalse(initStateSolution.contentEquals(this.solutionXtoY))
+    fun `board solution should be different after few randomSwapQueens call`() {
+        QueenBoard.randomInit(size = DEFAULT_MAX_BOARD_SIZE).run {
+            var newStateSolution = this.randomSwapQueens()
+            repeat(5) {
+                newStateSolution = this.randomSwapQueens()
+            }
+            assertEquals(this.solutionSize, newStateSolution.solutionSize)
+            assertFalse(this.solutionXtoY.contentEquals(newStateSolution.solutionXtoY))
         }
     }
 
     @Test
-    fun `computeEnergy should be zero size one because of the edge`() {
-        QueenBoard(solutionXtoY = intArrayOf(0)).run {
+    fun `board solution energy should be zero size one because of the edge`() {
+        QueenBoard.randomInit(size = 0).run {
             this.computeAndSetEnergy().also {
                 assertEquals(0, this.energy)
             }
@@ -40,14 +40,23 @@ class BrianLukeTest {
     }
 
     @Test
-    fun `computeEnergy should be zero size two`() {
+    fun `board solution energy should be more than zero size`() {
+        QueenBoard.randomInit(size = DEFAULT_MAX_BOARD_SIZE).run {
+            this.computeAndSetEnergy().also {
+                assertTrue(this.energy > 0)
+            }
+        }
+    }
+
+    @Test
+    fun `board solution energy shouldn't be zero cause board size is two`() {
         QueenBoard(solutionXtoY = intArrayOf(0, 1)).run {
             this.computeAndSetEnergy().also { assertEquals(2, this.energy) }
         }
     }
 
     @Test
-    fun `computeEnergy shouldn't be zero size three version0`() {
+    fun `board solution energy shouldn't be zero size three ver0`() {
         QueenBoard(solutionXtoY = intArrayOf(0, 1, 2)).run {
             this.computeAndSetEnergy().also {
                 assertNotEquals(0, this.energy)
@@ -57,14 +66,14 @@ class BrianLukeTest {
     }
 
     @Test
-    fun `computeEnergy shouldn't be zero size three version1`() {
+    fun `computeEnergy shouldn't be zero size three ver1`() {
         QueenBoard(solutionXtoY = intArrayOf(0, 2, 1)).run {
             this.computeAndSetEnergy().also { assertEquals(2, this.energy) }
         }
     }
 
     @Test
-    fun `computeEnergy should be zero`() {
+    fun `computeEnergy should be zero according custom data`() {
         QueenBoard(solutionXtoY = intArrayOf(4, 6, 0, 3, 1, 7, 5, 2)).run {
             this.computeAndSetEnergy().also {
                 assertEquals(0, this.energy)
