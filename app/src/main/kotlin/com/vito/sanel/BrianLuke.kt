@@ -4,10 +4,10 @@ import com.vito.sanel.models.QueenBoard
 import kotlin.math.exp
 import kotlin.random.Random
 
-const val DEFAULT_MAX_BOARD_SIZE = 2000
-const val INITIAL_TEMPERATURE = 0.4
-const val FINAL_TEMPERATURE = 0.27
-const val ALPHA = 0.98
+const val DEFAULT_MAX_BOARD_SIZE = 1000
+const val INITIAL_TEMPERATURE = 0.6
+const val FINAL_TEMPERATURE = 0.02
+const val ALPHA = 0.99
 const val STEPS_PER_CHANGE = 400
 
 class BrianLuke {
@@ -17,7 +17,7 @@ class BrianLuke {
      * Bryan Luke algorithm include external cycle and some delta depend on accepting new solutionXtoY etc.
      * @param boardSize length of solutionXtoY as QueenBoard length
      */
-    fun generateBoardAndPrintSolutionOld(boardSize: Int = DEFAULT_MAX_BOARD_SIZE) {
+    fun generateBoardAndPrintSolution(boardSize: Int = DEFAULT_MAX_BOARD_SIZE) {
         var anySolutionFound = false
         var currentQueenBoardSolution = QueenBoard.randomInit(size = boardSize)
 
@@ -69,7 +69,7 @@ class BrianLuke {
         }
     }
 
-    fun generateBoardAndPrintSolution(boardSize: Int = DEFAULT_MAX_BOARD_SIZE) {
+    fun generateBoardAndPrintSolutionNew(boardSize: Int = DEFAULT_MAX_BOARD_SIZE) {
         var current = QueenBoard.randomInit(size = boardSize)
         var best: QueenBoard? = null
 
