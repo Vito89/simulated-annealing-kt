@@ -4,12 +4,11 @@ import com.vito.sanel.models.QueenBoard
 import kotlin.math.exp
 import kotlin.random.Random
 
-const val DEFAULT_MAX_BOARD_SIZE = 50
+const val DEFAULT_MAX_BOARD_SIZE = 2000
 const val INITIAL_TEMPERATURE = 0.4
 const val FINAL_TEMPERATURE = 0.27
 const val ALPHA = 0.98
 const val STEPS_PER_CHANGE = 400
-//const val DEFAULT_ENERGY = 100
 
 class BrianLuke {
 
@@ -21,33 +20,27 @@ class BrianLuke {
     fun generateBoardAndPrintSolution(boardSize: Int = DEFAULT_MAX_BOARD_SIZE) {
         var anySolutionFound = false
         var currentQueenBoardSolution = QueenBoard.randomInit(size = boardSize)
-//            .apply {
-//            computeAndSetEnergy()
-//        }
 
         var newBoardSolution = currentQueenBoardSolution.clone()
-        var bestQueenBoardSolution = QueenBoard(solutionXtoY = intArrayOf(boardSize))
+        var bestQueenBoardSolution = QueenBoard.randomInit(size = boardSize)
         var bestTemperature = -1.0
         var currentTemperature = INITIAL_TEMPERATURE
 
         // this parameter doesn't depend on algorithm but interested in statistics and will be printed to log
         var acceptedByToleranceCount = 0
 
-        while ((currentTemperature > FINAL_TEMPERATURE) && (bestQueenBoardSolution.conflictQueensOnDiagonals != 0)) {
+        while ((currentTemperature > FINAL_TEMPERATURE) && (bestQueenBoardSolution.energy != 0)) {
             println("Current temperature is: $currentTemperature")
 
             repeat(STEPS_PER_CHANGE) {
                 var mustUseNewBoardSolution = false
-                newBoardSolution = newBoardSolution.apply {
-                    randomSwapQueens()
-//                    computeAndSetEnergy()
-                }
+                newBoardSolution = newBoardSolution.randomSwapQueens()
 
-                if (newBoardSolution.conflictQueensOnDiagonals <= currentQueenBoardSolution.conflictQueensOnDiagonals) {
+                if (newBoardSolution.energy <= currentQueenBoardSolution.energy) {
                     mustUseNewBoardSolution = true
                 } else {
                     val randomFloat = Random.nextFloat()
-                    val delta = newBoardSolution.conflictQueensOnDiagonals - currentQueenBoardSolution.conflictQueensOnDiagonals
+                    val delta = newBoardSolution.energy - currentQueenBoardSolution.energy
                     if (exp(-delta / currentTemperature) > randomFloat) {
                         mustUseNewBoardSolution = true
                         acceptedByToleranceCount++
@@ -56,8 +49,8 @@ class BrianLuke {
 
                 if (mustUseNewBoardSolution) {
                     currentQueenBoardSolution = newBoardSolution.clone()
-                    if (currentQueenBoardSolution.conflictQueensOnDiagonals < bestQueenBoardSolution.conflictQueensOnDiagonals) {
-                        println("Moving best solution, new energy: ${currentQueenBoardSolution.conflictQueensOnDiagonals}")
+                    if (currentQueenBoardSolution.energy < bestQueenBoardSolution.energy) {
+                        println("Moving best solution, new energy: ${currentQueenBoardSolution.energy}")
                         bestQueenBoardSolution = currentQueenBoardSolution.clone()
                         bestTemperature = currentTemperature
                         anySolutionFound = true
@@ -70,9 +63,11 @@ class BrianLuke {
         }
         if (anySolutionFound) {
             println("Founded solution has bestTemperature: $bestTemperature, acceptedByToleranceCount: $acceptedByToleranceCount")
-            println(bestQueenBoardSolution)
+//            println(bestQueenBoardSolution)
         } else {
             println("Warn: no any solution has found for board size: $boardSize")
         }
     }
+
+    private val QueenBoard?.energy get() = this?.conflictQueensOnDiagonals ?: Int.MAX_VALUE
 }
