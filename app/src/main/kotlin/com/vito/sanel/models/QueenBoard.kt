@@ -25,13 +25,13 @@ data class QueenBoard(
 
     override fun toString() = buildString {
         appendLine("Current board conflictQueensOnDiagonals: $conflictQueensOnDiagonals")
-//        for (y in 0 until solutionSize) {
-//            for (x in 0 until solutionSize) {
-//                append(if (isQueen(x, y)) "Q" else "x")
-//                append(" ")
-//            }
-//            appendLine()
-//        }
+        for (y in 0 until solutionSize) {
+            for (x in 0 until solutionSize) {
+                append(if (isQueen(x, y)) "Q" else "x")
+                append(" ")
+            }
+            appendLine()
+        }
     }
 
     val conflictQueensOnDiagonals by lazy {
