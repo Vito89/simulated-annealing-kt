@@ -33,51 +33,43 @@ class BrianLukeTest {
     @Test
     fun `board solution energy should be zero size one because of the edge`() {
         QueenBoard.randomInit(size = 0).run {
-            this.computeAndSetEnergy().also {
-                assertEquals(0, this.energy)
-            }
+            assertEquals(0, this.conflictQueensOnDiagonals)
         }
     }
 
     @Test
     fun `board solution energy should be more than zero size`() {
         QueenBoard.randomInit(size = DEFAULT_MAX_BOARD_SIZE).run {
-            this.computeAndSetEnergy().also {
-                assertTrue(this.energy > 0)
-            }
+            assertTrue(this.conflictQueensOnDiagonals > 0)
         }
     }
 
     @Test
     fun `board solution energy shouldn't be zero cause board size is two`() {
         QueenBoard(solutionXtoY = intArrayOf(0, 1)).run {
-            this.computeAndSetEnergy().also { assertEquals(2, this.energy) }
+            assertEquals(2, this.conflictQueensOnDiagonals)
         }
     }
 
     @Test
     fun `board solution energy shouldn't be zero size three ver0`() {
         QueenBoard(solutionXtoY = intArrayOf(0, 1, 2)).run {
-            this.computeAndSetEnergy().also {
-                assertNotEquals(0, this.energy)
-                assertEquals(6, this.energy)
-            }
+            assertNotEquals(0, this.conflictQueensOnDiagonals)
+            assertEquals(6, this.conflictQueensOnDiagonals)
         }
     }
 
     @Test
     fun `computeEnergy shouldn't be zero size three ver1`() {
         QueenBoard(solutionXtoY = intArrayOf(0, 2, 1)).run {
-            this.computeAndSetEnergy().also { assertEquals(2, this.energy) }
+            assertEquals(2, this.conflictQueensOnDiagonals)
         }
     }
 
     @Test
     fun `computeEnergy should be zero according custom data`() {
         QueenBoard(solutionXtoY = intArrayOf(4, 6, 0, 3, 1, 7, 5, 2)).run {
-            this.computeAndSetEnergy().also {
-                assertEquals(0, this.energy)
-            }
+            assertEquals(0, this.conflictQueensOnDiagonals)
         }
     }
 }
