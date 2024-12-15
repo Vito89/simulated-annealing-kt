@@ -4,7 +4,7 @@ import com.vito.sanel.models.QueenBoard
 import kotlin.math.exp
 import kotlin.random.Random
 
-const val DEFAULT_MAX_BOARD_SIZE = 1000
+const val DEFAULT_MAX_BOARD_SIZE = 100
 
 class BrianLuke {
 
@@ -15,19 +15,17 @@ class BrianLuke {
      */
     fun generateBoardAndPrintSolution(boardSize: Int = DEFAULT_MAX_BOARD_SIZE) {
         var current = QueenBoard.randomInit(size = boardSize)
-        var best: QueenBoard? = null
+        var best = current
 
         for (temperature in temperatures) {
             val new = current.randomSwapQueens()
-
-            val shouldTolerateNewEnergy = exp((current.energy - new.energy) / temperature) > Random.nextFloat()
-
-            if (new.energy <= current.energy || shouldTolerateNewEnergy) {
+            val shouldTolerateNewScore = exp((current.score - new.score) / temperature) > Random.nextFloat()
+            if (new.score <= current.score || shouldTolerateNewScore) {
                 current = new
-                if (current.energy < best.energy) {
-                    println("Moving best, new energy: ${new.energy}, temperature is: $temperature")
+                if (current.score < best.score) {
+                    println("Moving best, new score: ${new.score}, temperature is: $temperature")
                     best = current
-                    if (best.energy == 0) {
+                    if (best.score == 0) {
                         println(best)
                         return
                     }
@@ -48,5 +46,5 @@ class BrianLuke {
         }
     }
 
-    private val QueenBoard?.energy get() = this?.conflictQueensOnDiagonals ?: Int.MAX_VALUE
+    private val QueenBoard.score get() = this.threatingQueenCount
 }
