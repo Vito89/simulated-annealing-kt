@@ -19,8 +19,8 @@ class BrianLuke {
 
         for (temperature in temperatures) {
             val new = current.randomSwapQueens()
-            val shouldTolerateNewScore = exp((current.score - new.score) / temperature) > Random.nextFloat()
-            if (new.score <= current.score || shouldTolerateNewScore) {
+            val acceptNewScore = exp((current.score - new.score) / temperature) >= Random.nextFloat()
+            if (acceptNewScore) {
                 current = new
                 if (current.score < best.score) {
                     println("Moving best, new score: ${new.score}, temperature is: $temperature")
