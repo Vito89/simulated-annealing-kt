@@ -24,7 +24,7 @@ data class QueenBoard(
     }
 
     override fun toString() = buildString {
-        appendLine("Current board conflictQueensOnDiagonals: $conflictQueensOnDiagonals")
+        appendLine("Current board conflictQueensOnDiagonals: $threatingQueenCount")
         for (y in 0 until solutionSize) {
             for (x in 0 until solutionSize) {
                 append(if (isQueen(x, y)) "Q" else "x")
@@ -34,15 +34,15 @@ data class QueenBoard(
         }
     }
 
-    val conflictQueensOnDiagonals by lazy {
+    val threatingQueenCount by lazy {
         (0 until solutionSize).sumOf { computeConflictQueensOnDiagonals(x = it) }
     }
 
     private fun computeConflictQueensOnDiagonals(x: Int): Int =
         computeConflictQueensOnDiagonal(x, xInc = -1, yInc = -1) +
-                computeConflictQueensOnDiagonal(x, xInc = 1, yInc = 1) +
-                computeConflictQueensOnDiagonal(x, xInc = -1, yInc = 1) +
-                computeConflictQueensOnDiagonal(x, xInc = 1, yInc = -1)
+            computeConflictQueensOnDiagonal(x, xInc = 1, yInc = 1) +
+            computeConflictQueensOnDiagonal(x, xInc = -1, yInc = 1) +
+            computeConflictQueensOnDiagonal(x, xInc = 1, yInc = -1)
 
     private fun computeConflictQueensOnDiagonal(x: Int, xInc: Int, yInc: Int): Int {
         var conflictCount = 0
